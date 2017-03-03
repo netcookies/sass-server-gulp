@@ -1,0 +1,24 @@
+{
+  "name": "sassGulp",
+  "description": "Sass Gulp Server",
+  "main": "index.js",
+  "authors": [
+    "Andrew Li"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-sass": "^3.3.7",
+    "font-awesome": "fontawesome#^4.6.3",
+    "eonasdan-bootstrap-datetimepicker": "latest",
+    "bootstrap-validator": "latest"
+  }
+}
