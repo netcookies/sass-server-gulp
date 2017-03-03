@@ -8,9 +8,9 @@ https://nodejs.org/en/download/
 Execute
 
 ``` 
-$ npm install -g gulp bower
+$ npm install -g gulp bower yarn
 
-$ npm install
+$ yarn install
 
 $ bower install
 ```

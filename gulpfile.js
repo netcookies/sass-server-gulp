@@ -4,7 +4,7 @@ var gulp = require('gulp');
 
 // Include plugins
 var sass = require('gulp-sass');
-var minifyCss = require('gulp-minify-css');
+var minifyCss = require('gulp-clean-css');
 var rename = require('gulp-rename');
 var connect = require('gulp-connect');
 const image = require('gulp-image');
@@ -49,9 +49,9 @@ gulp.task('sass', function () {
         .pipe(sourcemaps.init())
         .pipe(sass(sassOptions).on('error', sass.logError))
         .pipe(minifyCss({
-            keepSpecialComments: 0,
+            specialComments: 0,
             compatibility: 'ie8',
-            keepBreaks: false
+            { format: 'keep-breaks' }
         }))
         .pipe(rename({
             suffix: ".min"
@@ -111,18 +111,18 @@ gulp.task('html', function () {
         .pipe(connect.reload());
 });
 
-//gulp.task('copy_to_wp', ['sass'], function(){
-    //gulp.src([
-        //config.outputDir + '/css/*'
-    //])
-        //.pipe(gulp.dest('./wp_assets/css'));
-//});
+gulp.task('copy_to_wp', ['sass'], function(){
+    gulp.src([
+        config.outputDir + '/css/*'
+    ])
+        .pipe(gulp.dest('./wp_assets/css'));
+});
 
 gulp.task('watch', function() {
     gulp.watch(['./public/*.html'], ['html']);
     gulp.watch(config.inputDir + '/scss/**/*.scss',
         ['sass'
-        , 'copy_to_wp'
+        //, 'copy_to_wp'
         ]);
     gulp.watch(config.inputDir + '/img/*', ['image']);
 });
