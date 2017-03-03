@@ -21,16 +21,20 @@ $ bower install
 # Use
 ```
 $ gulp
-```
+or
+$ gulp --https
 
-Open url `http://localhost:8000` in  any browser :)
+reserve proxy(not need --https):
+$ gulp --proxy "http://your.hostname"
+```
 
 ####Studio Setup
 
 ```
-Responsive Skin CSS URL : http://localhost:8000/css/main.css
-(webroot:'sass-server')
-
+Responsive Skin CSS URL : http://localhost:8080/css/skin.css
+(webroot:'public')
+put below script into the dom:
+<script async="" src="//localhost:8080/browser-sync/browser-sync-client.js?v=2.18.8"></script>
 ```
 
 ####Working SCSS

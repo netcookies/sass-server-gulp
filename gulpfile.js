@@ -6,11 +6,21 @@ var gulp = require('gulp');
 var sass = require('gulp-sass');
 var minifyCss = require('gulp-clean-css');
 var rename = require('gulp-rename');
-var connect = require('gulp-connect');
+var browserSync = require('browser-sync');
 const image = require('gulp-image');
 var inlineSvg = require('gulp-inline-svg');
 var svgmin = require('gulp-svgmin');
+var minimist = require('minimist');
+var stream = browserSync.stream;
+var reload = browserSync.reload;
 
+var knownOptions = {
+    string: 'proxy',
+    boolean: 'https',
+    default: { proxy: 'none' }
+};
+
+var options = minimist(process.argv.slice(2), knownOptions);
 
 var config = {
     bowerDir: './bower_components',
@@ -22,18 +32,44 @@ var config = {
 var sassOptions = {
     errLogToConsole: true,
     style: 'compressed',
-    outputStyle: 'expanded',
-    includePaths: [
-        config.bowerDir + '/bootstrap-sass/assets/stylesheets'
-    ]
+    outputStyle: 'expanded'
 };
 
-gulp.task('connect', function() {
-    connect.server({
-        root: 'public',
-        port: 8000,
-        livereload: true
-    });
+gulp.task('browserSync', function() {
+        if(options.proxy === 'none'){
+            browserSync({
+                server: {
+                    baseDir: config.outputDir,
+                    routes:{
+                        "/html/assets": config.outputDir + "/img"
+                    },
+                    directory: true
+                }
+                ,https: options.https
+                ,socket:{
+                    domain: 'localhost:8080'
+                }
+                ,open: false
+                ,port: 8080
+            });
+        } else {
+            browserSync({
+                proxy: options.proxy
+                ,port: 8000
+                ,serveStatic: [
+                    {
+                    route: '/html/assets',
+                    dir: [config.outputDir + '/img',
+                        config.outputDir + '/fonts',
+                        config.outputDir + '/js']
+                    },
+                    {
+                    route: '/css',
+                    dir: [config.outputDir + '/css']
+                    }
+                ]
+            });
+        }
 });
 
 
@@ -59,7 +95,7 @@ gulp.task('sass', function () {
         .pipe(postcss([ autoprefixer(autoprefixerOptions) ]))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(config.outputDir +'/css'))
-        .pipe(connect.reload());
+        .pipe(stream({match: '**/*.css'}));
 });
 
 gulp.task('bootstrap_fonts', function() {
@@ -93,9 +129,9 @@ gulp.task('fontawesome-css', function() {
 gulp.task('image', function () {
     return gulp.src([
         config.inputDir + '/img/*'])
-        .pipe(image())
-        .pipe(gulp.dest(config.outputDir + '/html/assets'))
-        .pipe(connect.reload());
+        .pipe(image({zopflipng: false}))
+        .pipe(gulp.dest(config.outputDir + '/img'))
+        .pipe(stream());
 });
 
 gulp.task('svg', function(){
@@ -107,23 +143,14 @@ gulp.task('svg', function(){
 });
 
 gulp.task('html', function () {
-    gulp.src('./public/*.html')
-        .pipe(connect.reload());
-});
-
-gulp.task('copy_to_wp', ['sass'], function(){
-    gulp.src([
-        config.outputDir + '/css/*'
-    ])
-        .pipe(gulp.dest('./wp_assets/css'));
+    gulp.src(config.outputDir + '/*.html')
+        .pipe(reload);
 });
 
 gulp.task('watch', function() {
-    gulp.watch(['./public/*.html'], ['html']);
+    gulp.watch([config.outputDir + '/*.html'], ['html']);
     gulp.watch(config.inputDir + '/scss/**/*.scss',
-        ['sass'
-        //, 'copy_to_wp'
-        ]);
+        ['sass']);
     gulp.watch(config.inputDir + '/img/*', ['image']);
 });
 
@@ -133,12 +160,8 @@ gulp.task('default', [
     'svg',
     'sass',
     'bootstrap_fonts',
-    //'bootstrap_js',
-    //'jquery',
-    //'fontawesome-fonts',
-    //'fontawesome-css',
+    'fontawesome-fonts',
     'image',
-    //'copy_to_wp',
-    'connect',
+    'browserSync',
     'watch'
 ]);
