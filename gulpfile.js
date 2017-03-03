@@ -49,9 +49,9 @@ gulp.task('sass', function () {
         .pipe(sourcemaps.init())
         .pipe(sass(sassOptions).on('error', sass.logError))
         .pipe(minifyCss({
-            specialComments: 0,
-            compatibility: 'ie8',
-            { format: 'keep-breaks' }
+            compatibility: 'ie8'
+            ,specialComments: 0
+            //,format: 'keep-breaks'
         }))
         .pipe(rename({
             suffix: ".min"
