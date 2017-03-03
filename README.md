@@ -1,3 +1,7 @@
+# Features
+* Compress image in `./src/img`
+* Generate `_svg.scss` files, according svg files in `.src/svg`. eg. `$filenam: "data:image/svg+xml;......."`
+
 # Require Nodejs
 ``` 
 https://nodejs.org/en/download/
@@ -8,9 +12,9 @@ https://nodejs.org/en/download/
 Execute
 
 ``` 
-$ npm install -g gulp bower
+$ npm install -g gulp bower yarn
 
-$ npm install
+$ yarn install
 
 $ bower install
 ```
