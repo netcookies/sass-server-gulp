@@ -4,7 +4,7 @@ var gulp = require('gulp');
 
 // Include plugins
 var sass = require('gulp-sass');
-var minifyCss = require('gulp-minify-css');
+var minifyCss = require('gulp-clean-css');
 var rename = require('gulp-rename');
 var connect = require('gulp-connect');
 const image = require('gulp-image');
@@ -15,7 +15,7 @@ var svgmin = require('gulp-svgmin');
 var config = {
     bowerDir: './bower_components',
     inputDir: './src',
-    outputDir: './public/assets'
+    outputDir: './public/'
 };
 
 
@@ -49,9 +49,9 @@ gulp.task('sass', function () {
         .pipe(sourcemaps.init())
         .pipe(sass(sassOptions).on('error', sass.logError))
         .pipe(minifyCss({
-            keepSpecialComments: 0,
-            compatibility: 'ie8',
-            keepBreaks: false
+            compatibility: 'ie8'
+            ,specialComments: 0
+            //,format: 'keep-breaks'
         }))
         .pipe(rename({
             suffix: ".min"
@@ -94,7 +94,7 @@ gulp.task('image', function () {
     return gulp.src([
         config.inputDir + '/img/*'])
         .pipe(image())
-        .pipe(gulp.dest(config.outputDir + '/img'))
+        .pipe(gulp.dest(config.outputDir + '/html/assets'))
         .pipe(connect.reload());
 });
 
@@ -111,18 +111,18 @@ gulp.task('html', function () {
         .pipe(connect.reload());
 });
 
-//gulp.task('copy_to_wp', ['sass'], function(){
-    //gulp.src([
-        //config.outputDir + '/css/*'
-    //])
-        //.pipe(gulp.dest('./wp_assets/css'));
-//});
+gulp.task('copy_to_wp', ['sass'], function(){
+    gulp.src([
+        config.outputDir + '/css/*'
+    ])
+        .pipe(gulp.dest('./wp_assets/css'));
+});
 
 gulp.task('watch', function() {
     gulp.watch(['./public/*.html'], ['html']);
     gulp.watch(config.inputDir + '/scss/**/*.scss',
         ['sass'
-        , 'copy_to_wp'
+        //, 'copy_to_wp'
         ]);
     gulp.watch(config.inputDir + '/img/*', ['image']);
 });
@@ -133,10 +133,10 @@ gulp.task('default', [
     'svg',
     'sass',
     'bootstrap_fonts',
-    'bootstrap_js',
-    'jquery',
-    'fontawesome-fonts',
-    'fontawesome-css',
+    //'bootstrap_js',
+    //'jquery',
+    //'fontawesome-fonts',
+    //'fontawesome-css',
     'image',
     //'copy_to_wp',
     'connect',

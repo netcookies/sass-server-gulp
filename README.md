@@ -22,3 +22,5 @@ $ bower install
 ```
 $ gulp
 ```
+
+Open url `http://localhost:8000` in  any browser :)
