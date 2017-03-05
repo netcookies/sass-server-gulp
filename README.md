@@ -14,16 +14,19 @@ Execute
 ``` 
 $ npm install -g gulp bower yarn
 
+$ cd sass-server-gulp
+
 $ yarn install
 
 $ bower install
 ```
 # Use
 ```
+Three mode ( 3 in 1 ):
 $ gulp
 or
 $ gulp --https
-
+or
 reserve proxy(not need --https):
 $ gulp --proxy "http://your.hostname"
 ```
@@ -31,9 +34,14 @@ $ gulp --proxy "http://your.hostname"
 ####Studio Setup
 
 ```
-Responsive Skin CSS URL : http://localhost:8080/css/skin.css
+Responsive Skin CSS URL : scheme://localhost:8080/css/skin.css
+scheme = http or https according the command `Use Paragraph`
+```
+
+important you *do no need* set up script manully in reserve proxy mode
+```
 (webroot:'public')
-put below script into the dom:
+put below script into page header:
 <script async="" src="//localhost:8080/browser-sync/browser-sync-client.js?v=2.18.8"></script>
 ```
 

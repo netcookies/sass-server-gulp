@@ -40,9 +40,6 @@ gulp.task('browserSync', function() {
             browserSync({
                 server: {
                     baseDir: config.outputDir,
-                    routes:{
-                        "/html/assets": config.outputDir + "/img"
-                    },
                     directory: true
                 }
                 ,https: options.https
@@ -58,14 +55,24 @@ gulp.task('browserSync', function() {
                 ,port: 8000
                 ,serveStatic: [
                     {
-                    route: '/html/assets',
-                    dir: [config.outputDir + '/img',
-                        config.outputDir + '/fonts',
-                        config.outputDir + '/js']
-                    },
-                    {
                     route: '/css',
                     dir: [config.outputDir + '/css']
+                    },
+                    {
+                    route: '/img',
+                    dir: [config.outputDir + '/img']
+                    },
+                    {
+                    route: '/fonts',
+                    dir: [config.outputDir + '/fonts']
+                    },
+                    {
+                    route: '/js',
+                    dir: [config.outputDir + '/js']
+                    },
+                    {
+                    route: '/html/assets',
+                    dir: [config.outputDir + '/html/assets']
                     }
                 ]
             });
@@ -104,7 +111,6 @@ gulp.task('bootstrap_fonts', function() {
 });
 
 gulp.task('bootstrap_js', function() {
-    //return gulp.src(config.bowerDir + '/bootstrap-sass/assets/javascripts/**/*')
     return gulp.src(config.bowerDir + '/bootstrap-sass/assets/javascripts/bootstrap.min.js')
         .pipe(gulp.dest(config.outputDir + '/js'));
 });
@@ -127,6 +133,11 @@ gulp.task('fontawesome-css', function() {
 });
 
 gulp.task('image', function () {
+    gulp.src([
+        config.inputDir + '/html/assets/*'])
+        .pipe(image({zopflipng: false}))
+        .pipe(gulp.dest(config.outputDir + '/html/assets'))
+        .pipe(stream());
     return gulp.src([
         config.inputDir + '/img/*'])
         .pipe(image({zopflipng: false}))
@@ -136,7 +147,8 @@ gulp.task('image', function () {
 
 gulp.task('svg', function(){
     return gulp.src([
-        config.inputDir + '/svg/*.svg'])
+        config.inputDir + '/svg/*.svg',
+        config.inputDir + '/html/assets/*.svg'])
         .pipe(svgmin())
         .pipe(inlineSvg())
         .pipe(gulp.dest(config.inputDir + '/scss/'));
