@@ -39,7 +39,7 @@ gulp.task('browserSync', function() {
         if(options.proxy === 'none'){
             browserSync({
                 server: {
-                    baseDir: config.outputDir,
+                    baseDir: [config.outputDir],
                     directory: true
                 }
                 ,https: options.https
@@ -100,7 +100,9 @@ gulp.task('sass', function () {
             suffix: ".min"
         }))
         .pipe(postcss([ autoprefixer(autoprefixerOptions) ]))
-        .pipe(sourcemaps.write('.'))
+        .pipe(sourcemaps.write({
+            sourceRoot: '../scss'
+        }))
         .pipe(gulp.dest(config.outputDir +'/css'))
         .pipe(stream({match: '**/*.css'}));
 });
