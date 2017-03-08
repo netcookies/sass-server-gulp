@@ -21,7 +21,13 @@ $ yarn install
 $ bower install
 ```
 # Use
-##Set up
+##Set environment
+
+###reserve proxy(recommend, If you are not in China):
+```
+$ gulp --proxy "http://stage.prod.site"
+```
+
 ###http mode
 ```
 $ gulp
@@ -34,6 +40,7 @@ put below script into page header:
 <script async="" src="//localhost:8080/browser-sync/browser-sync-client.js?v=2.18.8"></script>
 </#if>
 ```
+
 ###https mode
 ```
 $ gulp --https
@@ -47,12 +54,7 @@ put below script into page header:
 </#if>
 ```
 
-###reserve proxy(recommend, If you are not in China):
-```
-$ gulp --proxy "http://your.hostname"
-```
-
-## Start to work
+## Got to work
 ####Working SCSS
 
 add your custom scss in 
