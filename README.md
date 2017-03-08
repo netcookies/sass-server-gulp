@@ -21,6 +21,7 @@ $ yarn install
 $ bower install
 ```
 # Use
+##Set up
 ###http mode
 ```
 $ gulp
@@ -51,6 +52,7 @@ put below script into page header:
 $ gulp --proxy "http://your.hostname"
 ```
 
+## Start to work
 ####Working SCSS
 
 add your custom scss in 
