@@ -21,28 +21,34 @@ $ yarn install
 $ bower install
 ```
 # Use
+###http mode
 ```
-Three mode ( 3 in 1 ):
 $ gulp
-or
-$ gulp --https
-or
-reserve proxy(not need --https):
-$ gulp --proxy "http://your.hostname"
-```
 
-####Studio Setup
+Studio Responsive Skin CSS URL : 
+http://localhost:8080/css/skin.min.css
 
-```
-Responsive Skin CSS URL : scheme://localhost:8080/css/skin.css
-scheme = http or https according the command `Use Paragraph`
-```
-
-important you *do no need* set up script manully in reserve proxy mode
-```
-(webroot:'public')
 put below script into page header:
+<#if config.getString("phase", "prod") == "stage">
 <script async="" src="//localhost:8080/browser-sync/browser-sync-client.js?v=2.18.8"></script>
+</#if>
+```
+###https mode
+```
+$ gulp --https
+
+Studio Responsive Skin CSS URL : 
+https://localhost:8080/css/skin.min.css
+
+put below script into page header:
+<#if config.getString("phase", "prod") == "stage">
+<script async="" src="//localhost:8080/browser-sync/browser-sync-client.js?v=2.18.8"></script>
+</#if>
+```
+
+###reserve proxy(recommend, If you are not in China):
+```
+$ gulp --proxy "http://your.hostname"
 ```
 
 ####Working SCSS
