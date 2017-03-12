@@ -1,5 +1,5 @@
 {
-  "name": "sassGulp",
+  "name": "sass-gulp",
   "description": "Sass Gulp Server",
   "main": "index.js",
   "authors": [
