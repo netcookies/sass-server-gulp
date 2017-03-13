@@ -16,7 +16,7 @@ var reload = browserSync.reload;
 
 var knownOptions = {
     string: 'proxy',
-    boolean: 'https',
+    boolean: ['https', 'nolocal'],
     default: { proxy: 'none' }
 };
 
@@ -37,19 +37,31 @@ var sassOptions = {
 
 gulp.task('browserSync', function() {
         if(options.proxy === 'none'){
-            browserSync({
-                server: {
-                    baseDir: [config.outputDir],
-                    directory: true
-                }
-                ,https: options.https
-                ,socket:{
-                    domain: 'localhost:8080'
-                }
-                ,open: false
-                ,port: 8080
-            });
-        } else {
+            if(options.nolocal){
+                browserSync({
+                    server: {
+                        baseDir: [config.outputDir],
+                        directory: true
+                    }
+                    ,https: options.https
+                    ,open: false
+                    ,port: 8080
+                });
+            } else {
+                browserSync({
+                    server: {
+                        baseDir: [config.outputDir],
+                        directory: true
+                    }
+                    ,https: options.https
+                    ,socket:{
+                        domain: 'localhost:8080'
+                    }
+                    ,open: false
+                    ,port: 8080
+                });
+            }
+        }else {
             browserSync({
                 proxy: options.proxy
                 ,port: 8000
