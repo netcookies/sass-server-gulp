@@ -1,8 +1,0 @@
-@mixin components\qanda-messages {
-
-  .lia-message-qanda {
-    .lia-message-body + .lia-component-reply-button {
-      margin-bottom: $line-height-computed;
-    }
-  }
-}
