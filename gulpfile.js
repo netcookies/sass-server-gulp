@@ -154,14 +154,19 @@ function fontawesome_css{
         .pipe(gulp.dest(config.outputDir + '/fonts/font-awesome/css'));
 });
 
+function html_assets{
+    return gulp.src(config.inputDir + 'html/assets/**/*')
+        .pipe(gulp.dest(config.outputDir + '/html/assets'));
+}
+
 function image{
     gulp.src([
-        config.inputDir + '/html/assets/*'])
+        config.inputDir + '/html/assets/*.{jpg,jpeg,png}'])
         .pipe(image({zopflipng: false}))
         .pipe(gulp.dest(config.outputDir + '/html/assets'))
         .pipe(stream());
     return gulp.src([
-        config.inputDir + '/img/*'])
+        config.inputDir + '/img/*.{jpg,jpeg,png}'])
         .pipe(image({zopflipng: false}))
         .pipe(gulp.dest(config.outputDir + '/img'))
         .pipe(stream());
@@ -182,9 +187,10 @@ function html{
 });
 
 function watch{
-    gulp.watch([config.outputDir + '/*.html'], ['html']);
-    gulp.watch(config.inputDir + '/scss/**/*.scss', ['sass']);
-    gulp.watch(config.inputDir + '/img/*', ['image']);
+    gulp.watch([config.outputDir + '/*.html'], html);
+    gulp.watch(config.inputDir + '/scss/**/*.scss', sass);
+    gulp.watch([config.inputDir + '/img/*.{jpg,jpeg,png}', config.inputDir + '/html/assets/*.{jpg,jpeg,png}'], image);
+    gulp.watch([config.inputDir + '/svg/*.svg', config.inputDir + '/html/assets/*.svg'], svg);
 });
 
 
@@ -201,9 +207,9 @@ exports.browserSync       = browserSync;
 exports.watch             = watch;
 
 if(options.nolithium){
-    var build = gulp.series(svg, gulp.parallel(sass, html, image, bootstrap_js, bootstrap_fonts, fontawesome_css, fontawesome_fonts), browserSync);
+    var build = gulp.series(svg, gulp.parallel(sass, html, html_assets, image, bootstrap_js, bootstrap_fonts, fontawesome_css, fontawesome_fonts), browserSync);
 } else {
-    var build = gulp.series(svg, gulp.parallel(sass, image), browserSync);
+    var build = gulp.series(svg, gulp.parallel(sass, html_assets, image), browserSync);
 }
 
 gulp.task('build', build);
