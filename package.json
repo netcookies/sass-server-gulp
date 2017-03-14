@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "bower": "^1.8.0",
-    "gulp": "^1.2.2",
+    "gulp-cli": "^1.2.2",
     "gulp-bower": "^0.0.13",
     "gulp-connect": "^5.0.0",
     "gulp-clean-css": "^3.0.3",
