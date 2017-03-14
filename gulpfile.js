@@ -29,20 +29,22 @@ var config = {
 };
 
 
-var sassOptions = {
-    if(options.nolithium){
+if(options.nolithium){
+    var sassOptions = {
         errLogToConsole: true,
         style: 'compressed',
         outputStyle: 'expanded',
         includePaths: [
             config.bowerDir + '/bootstrap-sass/assets/stylesheets'
         ]
-    } else {
+    };
+} else {
+    var sassOptions = {
         errLogToConsole: true,
         style: 'compressed',
         outputStyle: 'expanded'
-    }
-};
+    };
+}
 
 function browserSync{
         if(options.proxy === 'none'){
