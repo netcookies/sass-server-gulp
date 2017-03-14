@@ -1,3 +1,7 @@
+# Atention
+
+Master branch is under developing. For production, please use tag v1.0.
+
 # Features
 * Compress image in `./src/img`
 * Generate `_svg.scss` files, according svg files in `.src/svg`. eg. `$filenam: "data:image/svg+xml;......."`
@@ -12,8 +16,6 @@ https://nodejs.org/en/download/
 Execute
 
 ``` 
-git clone -b 'v1.0' --single-branch https://github.com/netcookies/sass-server-gulp.git 
-
 $ npm install -g gulp bower yarn
 
 $ cd sass-server-gulp
