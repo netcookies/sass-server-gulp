@@ -12,6 +12,8 @@ https://nodejs.org/en/download/
 Execute
 
 ``` 
+git clone -b 'v1.0' --single-branch https://github.com/netcookies/sass-server-gulp.git 
+
 $ npm install -g gulp bower yarn
 
 $ cd sass-server-gulp
