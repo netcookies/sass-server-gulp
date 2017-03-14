@@ -16,7 +16,7 @@ var reload = browserSync.reload;
 
 var knownOptions = {
     string: 'proxy',
-    boolean: ['https', 'nolocal'],
+    boolean: ['https', 'nolocal', 'nolithium'],
     default: { proxy: 'none' }
 };
 
@@ -32,10 +32,15 @@ var config = {
 var sassOptions = {
     errLogToConsole: true,
     style: 'compressed',
-    outputStyle: 'expanded'
+    outputStyle: 'expanded',
+    if(!options.nolithium){
+        includePaths: [
+            config.bowerDir + '/bootstrap-sass/assets/stylesheets'
+        ]
+    }
 };
 
-gulp.task('browserSync', function() {
+function browserSync{
         if(options.proxy === 'none'){
             if(options.nolocal){
                 browserSync({
@@ -92,10 +97,9 @@ gulp.task('browserSync', function() {
 });
 
 
-gulp.task('sass', function () {
-    var postcss      = require('gulp-postcss');
+function sass{
     var sourcemaps   = require('gulp-sourcemaps');
-    var autoprefixer = require('autoprefixer');
+    var autoprefixer = require('gulp-autoprefixer');
     var autoprefixerOptions = {
         browsers: ['last 2 versions', '> 5%', 'Firefox ESR']
     };
@@ -111,7 +115,7 @@ gulp.task('sass', function () {
         .pipe(rename({
             suffix: ".min"
         }))
-        .pipe(postcss([ autoprefixer(autoprefixerOptions) ]))
+        .pipe(autoprefixer(autoprefixerOptions))
         .pipe(sourcemaps.write({
             sourceRoot: '../scss'
         }))
@@ -119,34 +123,34 @@ gulp.task('sass', function () {
         .pipe(stream({match: '**/*.css'}));
 });
 
-gulp.task('bootstrap_fonts', function() {
+function bootstrap_fonts{
     return gulp.src(config.bowerDir + '/bootstrap-sass/assets/fonts/**/*')
         .pipe(gulp.dest(config.outputDir + '/fonts'));
 });
 
-gulp.task('bootstrap_js', function() {
+function bootstrap_js{
     return gulp.src(config.bowerDir + '/bootstrap-sass/assets/javascripts/bootstrap.min.js')
         .pipe(gulp.dest(config.outputDir + '/js'));
 });
 
-gulp.task('jquery', function() {
+function jquery{
     return gulp.src(config.bowerDir + '/jquery-1.11.3/dist/jquery.min.*')
         .pipe(gulp.dest(config.outputDir + '/js'));
 });
 
-gulp.task('fontawesome-fonts', function() {
+function fontawesome_fonts{
     return gulp.src([
         config.bowerDir + '/font-awesome/fonts/*'])
         .pipe(gulp.dest(config.outputDir + '/fonts/font-awesome/fonts'));
 });
 
-gulp.task('fontawesome-css', function() {
+function fontawesome_css{
     return gulp.src([
         config.bowerDir + '/font-awesome/css/*'])
         .pipe(gulp.dest(config.outputDir + '/fonts/font-awesome/css'));
 });
 
-gulp.task('image', function () {
+function image{
     gulp.src([
         config.inputDir + '/html/assets/*'])
         .pipe(image({zopflipng: false}))
@@ -159,7 +163,7 @@ gulp.task('image', function () {
         .pipe(stream());
 });
 
-gulp.task('svg', function(){
+function svg{
     return gulp.src([
         config.inputDir + '/svg/*.svg',
         config.inputDir + '/html/assets/*.svg'])
@@ -168,26 +172,34 @@ gulp.task('svg', function(){
         .pipe(gulp.dest(config.inputDir + '/scss/'));
 });
 
-gulp.task('html', function () {
+function html{
     gulp.src(config.outputDir + '/*.html')
         .pipe(reload);
 });
 
-gulp.task('watch', function() {
+function watch{
     gulp.watch([config.outputDir + '/*.html'], ['html']);
-    gulp.watch(config.inputDir + '/scss/**/*.scss',
-        ['sass']);
+    gulp.watch(config.inputDir + '/scss/**/*.scss', ['sass']);
     gulp.watch(config.inputDir + '/img/*', ['image']);
 });
 
 
+exports.svg               = svg;
+exports.sass              = sass;
+exports.html              = html;
+exports.jquery            = jquery;
+exports.bootstrap_fonts   = bootstrap_fonts;
+exports.bootstrap_js      = bootstrap_js;
+exports.fontawesome_fonts = fontawesome_fonts;
+exports.fontawesome_css    = fontawesome_css;
+exports.image             = image;
+exports.browserSync       = browserSync;
+exports.watch             = watch;
 
-gulp.task('default', [
-    'svg',
-    'sass',
-    'bootstrap_fonts',
-    'fontawesome-fonts',
-    'image',
-    'browserSync',
-    'watch'
-]);
+if(options.nolithium){
+    var build = gulp.series(svg, gulp.parallel(sass, html, image, bootstrap_js, bootstrap_fonts, fontawesome_css, fontawesome_fonts), browserSync);
+} else {
+    var build = gulp.series(svg, gulp.parallel(sass, image), browserSync);
+}
+
+export default build;
