@@ -10,17 +10,18 @@
   "license": "MIT",
   "dependencies": {
     "bower": "^1.8.0",
-    "gulp-cli": "^1.2.2",
+    "gulp": "gulpjs/gulp#4.0",
+    "gulp-autoprefixer": "^3.1.1",
     "gulp-bower": "^0.0.13",
-    "gulp-connect": "^5.0.0",
     "gulp-clean-css": "^3.0.3",
+    "gulp-cli": "^1.2.2",
+    "gulp-connect": "^5.0.0",
+    "gulp-image": "^2.7.5",
+    "gulp-inline-svg": "^1.1.1",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^3.1.0",
-    "gulp-image": "^2.7.5",
     "gulp-sourcemaps": "^2.4.1",
-    "gulp-autoprefixer": "^3.1.1",
     "gulp-svgmin": "^1.2.3",
-    "gulp-inline-svg": "^1.1.1",
     "minimist": "^1.2.0"
   },
   "devDependencies": {

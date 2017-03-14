@@ -30,16 +30,17 @@ var config = {
 
 
 var sassOptions = {
-    errLogToConsole: true,
-    style: 'compressed',
-    outputStyle: 'expanded',
     if(options.nolithium){
-        includePaths: [
-        ]
-    } else {
+        errLogToConsole: true,
+        style: 'compressed',
+        outputStyle: 'expanded',
         includePaths: [
             config.bowerDir + '/bootstrap-sass/assets/stylesheets'
         ]
+    } else {
+        errLogToConsole: true,
+        style: 'compressed',
+        outputStyle: 'expanded'
     }
 };
 
