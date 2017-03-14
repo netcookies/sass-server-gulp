@@ -202,4 +202,6 @@ if(options.nolithium){
     var build = gulp.series(svg, gulp.parallel(sass, image), browserSync);
 }
 
-export default build;
+gulp.task('build', build);
+gulp.task('default', build);
+
