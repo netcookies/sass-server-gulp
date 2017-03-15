@@ -1,6 +1,6 @@
 # Atention
 
-Master branch is under developing. For production, please use tag v1.0.
+For gulp 3.x, please use tag v1.0.
 
 # Features
 * Compress image in `./src/img`
@@ -16,7 +16,11 @@ https://nodejs.org/en/download/
 Execute
 
 ``` 
-$ npm install -g gulp bower yarn
+$ npm uninstall gulp --save-dev
+
+$ npm uninstall gulp -g
+
+$ npm install -g gulpjs/gulp#4.0 bower yarn
 
 $ cd sass-server-gulp
 
@@ -24,6 +28,7 @@ $ yarn install
 
 $ bower install
 ```
+
 # Use
 ##Set environment
 
