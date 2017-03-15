@@ -3,7 +3,7 @@ var gulp = require('gulp');
 
 
 // Include plugins
-var sass = require('gulp-sass');
+var sassCompiler = require('gulp-sass');
 var minifyCss = require('gulp-clean-css');
 var rename = require('gulp-rename');
 var browserSync = require('browser-sync');
@@ -112,7 +112,7 @@ function sass(){
 
     return gulp.src(config.inputDir + '/scss/*.scss')
         .pipe(sourcemaps.init())
-        .pipe(sass(sassOptions).on('error', sass.logError))
+        .pipe(sassCompiler(sassOptions).on('error', sass.logError))
         .pipe(minifyCss({
             compatibility: 'ie8'
             ,specialComments: 0
