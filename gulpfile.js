@@ -46,7 +46,7 @@ if(options.nolithium){
     };
 }
 
-function browserSync{
+function browserSync(){
         if(options.proxy === 'none'){
             if(options.nolocal){
                 browserSync({
@@ -103,7 +103,7 @@ function browserSync{
 });
 
 
-function sass{
+function sass(){
     var sourcemaps   = require('gulp-sourcemaps');
     var autoprefixer = require('gulp-autoprefixer');
     var autoprefixerOptions = {
@@ -129,39 +129,39 @@ function sass{
         .pipe(stream({match: '**/*.css'}));
 });
 
-function bootstrap_fonts{
+function bootstrap_fonts(){
     return gulp.src(config.bowerDir + '/bootstrap-sass/assets/fonts/**/*')
         .pipe(gulp.dest(config.outputDir + '/fonts'));
 });
 
-function bootstrap_js{
+function bootstrap_js(){
     return gulp.src(config.bowerDir + '/bootstrap-sass/assets/javascripts/bootstrap.min.js')
         .pipe(gulp.dest(config.outputDir + '/js'));
 });
 
-function jquery{
+function jquery(){
     return gulp.src(config.bowerDir + '/jquery-1.11.3/dist/jquery.min.*')
         .pipe(gulp.dest(config.outputDir + '/js'));
 });
 
-function fontawesome_fonts{
+function fontawesome_fonts(){
     return gulp.src([
         config.bowerDir + '/font-awesome/fonts/*'])
         .pipe(gulp.dest(config.outputDir + '/fonts/font-awesome/fonts'));
 });
 
-function fontawesome_css{
+function fontawesome_css(){
     return gulp.src([
         config.bowerDir + '/font-awesome/css/*'])
         .pipe(gulp.dest(config.outputDir + '/fonts/font-awesome/css'));
 });
 
-function html_assets{
+function html_assets(){
     return gulp.src(config.inputDir + 'html/assets/**/*')
         .pipe(gulp.dest(config.outputDir + '/html/assets'));
 }
 
-function image{
+function image(){
     gulp.src([
         config.inputDir + '/html/assets/*.{jpg,jpeg,png}'])
         .pipe(image({zopflipng: false}))
@@ -174,7 +174,7 @@ function image{
         .pipe(stream());
 });
 
-function svg{
+function svg(){
     return gulp.src([
         config.inputDir + '/svg/*.svg',
         config.inputDir + '/html/assets/*.svg'])
@@ -183,12 +183,12 @@ function svg{
         .pipe(gulp.dest(config.inputDir + '/scss/'));
 });
 
-function html{
+function html(){
     gulp.src(config.outputDir + '/*.html')
         .pipe(reload);
 });
 
-function watch{
+function watch(){
     gulp.watch([config.outputDir + '/*.html'], html);
     gulp.watch(config.inputDir + '/scss/**/*.scss', sass);
     gulp.watch([config.inputDir + '/img/*.{jpg,jpeg,png}', config.inputDir + '/html/assets/*.{jpg,jpeg,png}'], image);
