@@ -46,37 +46,37 @@ if(options.nolithium){
     };
 }
 
-function browserSync(){
+function liveReload(){
         if(options.proxy === 'none'){
             if(options.nolocal){
                 browserSync({
                     server: {
                         baseDir: [config.outputDir],
                         directory: true
-                    }
-                    ,https: options.https
-                    ,open: false
-                    ,port: 8080
+                    },
+                    https: options.https,
+                    open: false,
+                    port: 8080
                 });
             } else {
                 browserSync({
                     server: {
                         baseDir: [config.outputDir],
                         directory: true
-                    }
-                    ,https: options.https
-                    ,socket:{
+                    },
+                    https: options.https,
+                    socket:{
                         domain: 'localhost:8080'
-                    }
-                    ,open: false
-                    ,port: 8080
+                    },
+                    open: false,
+                    port: 8080
                 });
             }
         }else {
             browserSync({
-                proxy: options.proxy
-                ,port: 8000
-                ,serveStatic: [
+                proxy: options.proxy,
+                port: 8000,
+                serveStatic: [
                     {
                     route: '/css',
                     dir: [config.outputDir + '/css']
@@ -205,14 +205,14 @@ exports.bootstrap_fonts   = bootstrap_fonts;
 exports.bootstrap_js      = bootstrap_js;
 exports.fontawesome_fonts = fontawesome_fonts;
 exports.fontawesome_css   = fontawesome_css;
-exports.image_min             = image_min;
-exports.browserSync       = browserSync;
+exports.image_min         = image_min;
+exports.liveReload        = liveReload;
 exports.watch             = watch;
 
 if(options.nolithium){
-    var build = gulp.series(svg, gulp.parallel(sass, html, html_assets, image_min, bootstrap_js, bootstrap_fonts, fontawesome_css, fontawesome_fonts), browserSync);
+    var build = gulp.series(svg, gulp.parallel(sass, html, html_assets, image_min, bootstrap_js, bootstrap_fonts, fontawesome_css, fontawesome_fonts), liveReload);
 } else {
-    var build = gulp.series(svg, gulp.parallel(sass, html_assets, image_min), browserSync);
+    var build = gulp.series(svg, gulp.parallel(sass, html_assets, image_min), liveReload);
 }
 
 gulp.task('build', build);
