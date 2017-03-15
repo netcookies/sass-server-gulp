@@ -100,7 +100,7 @@ function browserSync(){
                 ]
             });
         }
-});
+};
 
 
 function sass(){
@@ -127,39 +127,39 @@ function sass(){
         }))
         .pipe(gulp.dest(config.outputDir +'/css'))
         .pipe(stream({match: '**/*.css'}));
-});
+};
 
 function bootstrap_fonts(){
     return gulp.src(config.bowerDir + '/bootstrap-sass/assets/fonts/**/*')
         .pipe(gulp.dest(config.outputDir + '/fonts'));
-});
+};
 
 function bootstrap_js(){
     return gulp.src(config.bowerDir + '/bootstrap-sass/assets/javascripts/bootstrap.min.js')
         .pipe(gulp.dest(config.outputDir + '/js'));
-});
+};
 
 function jquery(){
     return gulp.src(config.bowerDir + '/jquery-1.11.3/dist/jquery.min.*')
         .pipe(gulp.dest(config.outputDir + '/js'));
-});
+};
 
 function fontawesome_fonts(){
     return gulp.src([
         config.bowerDir + '/font-awesome/fonts/*'])
         .pipe(gulp.dest(config.outputDir + '/fonts/font-awesome/fonts'));
-});
+};
 
 function fontawesome_css(){
     return gulp.src([
         config.bowerDir + '/font-awesome/css/*'])
         .pipe(gulp.dest(config.outputDir + '/fonts/font-awesome/css'));
-});
+};
 
 function html_assets(){
     return gulp.src(config.inputDir + 'html/assets/**/*')
         .pipe(gulp.dest(config.outputDir + '/html/assets'));
-}
+};
 
 function image(){
     gulp.src([
@@ -172,7 +172,7 @@ function image(){
         .pipe(image({zopflipng: false}))
         .pipe(gulp.dest(config.outputDir + '/img'))
         .pipe(stream());
-});
+};
 
 function svg(){
     return gulp.src([
@@ -181,29 +181,30 @@ function svg(){
         .pipe(svgmin())
         .pipe(inlineSvg())
         .pipe(gulp.dest(config.inputDir + '/scss/'));
-});
+};
 
 function html(){
     gulp.src(config.outputDir + '/*.html')
         .pipe(reload);
-});
+};
 
 function watch(){
     gulp.watch([config.outputDir + '/*.html'], html);
     gulp.watch(config.inputDir + '/scss/**/*.scss', sass);
     gulp.watch([config.inputDir + '/img/*.{jpg,jpeg,png}', config.inputDir + '/html/assets/*.{jpg,jpeg,png}'], image);
     gulp.watch([config.inputDir + '/svg/*.svg', config.inputDir + '/html/assets/*.svg'], svg);
-});
+};
 
 
 exports.svg               = svg;
 exports.sass              = sass;
 exports.html              = html;
+exports.html_assets       = html_assets;
 exports.jquery            = jquery;
 exports.bootstrap_fonts   = bootstrap_fonts;
 exports.bootstrap_js      = bootstrap_js;
 exports.fontawesome_fonts = fontawesome_fonts;
-exports.fontawesome_css    = fontawesome_css;
+exports.fontawesome_css   = fontawesome_css;
 exports.image             = image;
 exports.browserSync       = browserSync;
 exports.watch             = watch;
