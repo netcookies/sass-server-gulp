@@ -112,7 +112,7 @@ function sass(){
 
     return gulp.src(config.inputDir + '/scss/*.scss')
         .pipe(sourcemaps.init())
-        .pipe(sassCompiler(sassOptions).on('error', sass.logError))
+        .pipe(sassCompiler(sassOptions).on('error', sassCompiler.logError))
         .pipe(minifyCss({
             compatibility: 'ie8'
             ,specialComments: 0
