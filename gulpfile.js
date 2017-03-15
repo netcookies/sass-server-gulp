@@ -161,7 +161,7 @@ function html_assets(){
         .pipe(gulp.dest(config.outputDir + '/html/assets'));
 };
 
-function image(){
+function image_min(){
     gulp.src([
         config.inputDir + '/html/assets/*.{jpg,jpeg,png}'])
         .pipe(image({zopflipng: false}))
@@ -205,14 +205,14 @@ exports.bootstrap_fonts   = bootstrap_fonts;
 exports.bootstrap_js      = bootstrap_js;
 exports.fontawesome_fonts = fontawesome_fonts;
 exports.fontawesome_css   = fontawesome_css;
-exports.image             = image;
+exports.image_min             = image_min;
 exports.browserSync       = browserSync;
 exports.watch             = watch;
 
 if(options.nolithium){
-    var build = gulp.series(svg, gulp.parallel(sass, html, html_assets, image, bootstrap_js, bootstrap_fonts, fontawesome_css, fontawesome_fonts), browserSync);
+    var build = gulp.series(svg, gulp.parallel(sass, html, html_assets, image_min, bootstrap_js, bootstrap_fonts, fontawesome_css, fontawesome_fonts), browserSync);
 } else {
-    var build = gulp.series(svg, gulp.parallel(sass, html_assets, image), browserSync);
+    var build = gulp.series(svg, gulp.parallel(sass, html_assets, image_min), browserSync);
 }
 
 gulp.task('build', build);
