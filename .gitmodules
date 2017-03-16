@@ -1,0 +1,3 @@
+[submodule "src/scss/responsive_peak"]
+	path = src/scss/responsive_peak
+	url = https://github.com/netcookies/community-skin
