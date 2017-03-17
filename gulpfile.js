@@ -210,11 +210,11 @@ exports.liveReload        = liveReload;
 exports.watch             = watch;
 
 if(options.nolithium){
-    var build = gulp.series(svg, gulp.parallel(sass, html, html_assets, image_min, bootstrap_js, bootstrap_fonts, fontawesome_css, fontawesome_fonts), liveReload);
+    var build = gulp.series(svg, html_assets, gulp.parallel(sass, html, image_min, bootstrap_js, bootstrap_fonts, fontawesome_css, fontawesome_fonts));
 } else {
-    var build = gulp.series(svg, gulp.parallel(sass, html_assets, image_min), liveReload);
+    var build = gulp.series(svg, html_assets, gulp.parallel(sass, image_min));
 }
 
 gulp.task('build', build);
-gulp.task('default', build);
+gulp.task('default', gulp.series(build, gulp.parallel(liveReload, watch)));
 
