@@ -6,7 +6,7 @@ For gulp 3.x, please use tag v1.0.
 * Compress image in `./src/img`
 * Generate `_svg.scss` files, according svg files in `.src/svg`. eg. `$filenam: "data:image/svg+xml;......."`
 
-# Require Nodejs
+# Require Nodejs, Python2
 ``` 
 https://nodejs.org/en/download/
 ``` 
@@ -16,6 +16,8 @@ https://nodejs.org/en/download/
 Execute
 
 ``` 
+$ git clone --recursive https://github.com/netcookies/sass-server-gulp.git
+
 $ npm uninstall gulp --save-dev
 
 $ npm uninstall gulp -g
