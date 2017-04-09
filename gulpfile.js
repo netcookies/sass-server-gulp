@@ -34,6 +34,7 @@ if(options.nolithium){
         errLogToConsole: true,
         style: 'compressed',
         outputStyle: 'expanded',
+        precision: 8,
         includePaths: [
             config.bowerDir + '/bootstrap-sass/assets/stylesheets'
         ]
