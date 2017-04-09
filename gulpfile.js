@@ -43,7 +43,8 @@ if(options.nolithium){
     var sassOptions = {
         errLogToConsole: true,
         style: 'compressed',
-        outputStyle: 'expanded'
+        outputStyle: 'expanded',
+        precision: 8
     };
 }
 
