@@ -44,20 +44,7 @@ $ gulp --proxy "http://stage.prod.site"
 $ gulp
 
 Studio Responsive Skin CSS URL : 
-http://localhost:8080/css/skin.min.css
-
-put below script into page header:
-<#if config.getString("phase", "prod") == "stage">
-<script async="" src="//localhost:8080/browser-sync/browser-sync-client.js?v=2.18.8"></script>
-</#if>
-```
-
-###https mode
-```
-$ gulp --https
-
-Studio Responsive Skin CSS URL : 
-https://localhost:8080/css/skin.min.css
+//localhost:8080/css/skin.min.css
 
 put below script into page header:
 <#if config.getString("phase", "prod") == "stage">
