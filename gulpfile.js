@@ -17,7 +17,7 @@ var reload = browserSync.reload;
 
 var knownOptions = {
     string: 'proxy',
-    boolean: ['https', 'nolocal', 'nolithium'],
+    boolean: ['nolocal', 'nolithium'],
     default: { proxy: 'none' }
 };
 
@@ -61,7 +61,6 @@ if(options.proxy === 'none'){
                 baseDir: [config.outputDir],
                 directory: true
             },
-            https: options.https,
             open: false,
             port: browserSyncPort
         };
@@ -71,7 +70,6 @@ if(options.proxy === 'none'){
                 baseDir: [config.outputDir],
                 directory: true
             },
-            https: options.https,
             socket:{
                 domain: localDomain
             },
