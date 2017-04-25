@@ -30,8 +30,8 @@ var config = {
 };
 
 var basePort = 8080;
-var httpPort = 8082;
-var httpsPort = 8083;
+var httpPort = 8081;
+var httpsPort = 8082;
 var browserSyncPort = 8088;
 var localDomain = 'localhost:' + basePort;
 
