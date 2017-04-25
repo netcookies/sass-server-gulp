@@ -1,6 +1,6 @@
 {
   "name": "sassGulp",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Sass Gulp Server",
   "main": "index.js",
   "scripts": {
@@ -22,11 +22,12 @@
     "gulp-sass": "^2.3.2",
     "gulp-sourcemaps": "^2.4.1",
     "gulp-svgmin": "^1.2.3",
+    "http-proxy-damon": "^1.15.2",
     "minimist": "^1.2.0"
   },
   "devDependencies": {
     "browser-sync": "^2.18.8",
-    "megatype": "^1.1.2",
-    "gulp-sass": "^2.3.2"
+    "gulp-sass": "^2.3.2",
+    "megatype": "^1.1.2"
   }
 }

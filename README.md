@@ -77,7 +77,7 @@ sass/_variables.scss
 ````
 
 ####Peak Version
-17.1
+17.2
 
 ####Notes
 if chrome is complaing about loading unsafe script on the address bar, tick it, so the local css can work.

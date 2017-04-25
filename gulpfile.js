@@ -11,6 +11,7 @@ const image = require('gulp-image');
 var inlineSvg = require('gulp-inline-svg');
 var svgmin = require('gulp-svgmin');
 var minimist = require('minimist');
+var fs    = require('fs');
 var stream = browserSync.stream;
 var reload = browserSync.reload;
 
@@ -28,6 +29,11 @@ var config = {
     outputDir: './public/'
 };
 
+var basePort = 8080;
+var httpPort = 8082;
+var httpsPort = 8083;
+var browserSyncPort = 8088;
+var localDomain = 'localhost:' + basePort;
 
 if(options.nolithium){
     var sassOptions = {
@@ -48,60 +54,107 @@ if(options.nolithium){
     };
 }
 
-function liveReload(){
-        if(options.proxy === 'none'){
-            if(options.nolocal){
-                browserSync({
-                    server: {
-                        baseDir: [config.outputDir],
-                        directory: true
-                    },
-                    https: options.https,
-                    open: false,
-                    port: 8080
-                });
-            } else {
-                browserSync({
-                    server: {
-                        baseDir: [config.outputDir],
-                        directory: true
-                    },
-                    https: options.https,
-                    socket:{
-                        domain: 'localhost:8080'
-                    },
-                    open: false,
-                    port: 8080
-                });
+if(options.proxy === 'none'){
+    if(options.nolocal){
+        var browserSyncOptions = {
+            server: {
+                baseDir: [config.outputDir],
+                directory: true
+            },
+            https: options.https,
+            open: false,
+            port: browserSyncPort
+        };
+    } else {
+        var browserSyncOptions = {
+            server: {
+                baseDir: [config.outputDir],
+                directory: true
+            },
+            https: options.https,
+            socket:{
+                domain: localDomain
+            },
+            open: false,
+            port: browserSyncPort
+        };
+    }
+} else {
+    var browserSyncOptions = {
+        proxy: options.proxy,
+        port: browserSyncPort,
+        serveStatic: [
+            {
+                route: '/css',
+                dir: [config.outputDir + '/css']
+            },
+            {
+                route: '/img',
+                dir: [config.outputDir + '/img']
+            },
+            {
+                route: '/fonts',
+                dir: [config.outputDir + '/fonts']
+            },
+            {
+                route: '/js',
+                dir: [config.outputDir + '/js']
+            },
+            {
+                route: '/html/assets',
+                dir: [config.outputDir + '/html/assets']
             }
-        }else {
-            browserSync({
-                proxy: options.proxy,
-                port: 8000,
-                serveStatic: [
-                    {
-                    route: '/css',
-                    dir: [config.outputDir + '/css']
-                    },
-                    {
-                    route: '/img',
-                    dir: [config.outputDir + '/img']
-                    },
-                    {
-                    route: '/fonts',
-                    dir: [config.outputDir + '/fonts']
-                    },
-                    {
-                    route: '/js',
-                    dir: [config.outputDir + '/js']
-                    },
-                    {
-                    route: '/html/assets',
-                    dir: [config.outputDir + '/html/assets']
-                    }
-                ]
+        ]
+    };
+}
+
+var httpProxyOptions = {
+    target: {
+        host: 'localhost',
+        port: browserSyncPort
+    }
+};
+
+var httpsOptions = {
+    key: fs.readFileSync('localhost.key.pem', 'utf8'),
+    cert: fs.readFileSync('localhost.cert.pem', 'utf8')
+}
+
+
+function liveReload(){
+    browserSync(browserSyncOptions);
+
+    var net = require('net');
+    var http = require('http');
+    var https = require('https');
+    var httpProxy = require('http-proxy');
+
+    function tcpConnection(conn) {
+        conn.once('data', function (buf) {
+            // A TLS handshake record starts with byte 22.
+            var address = (buf[0] === 22) ? httpsPort : httpPort;
+            var proxy = net.createConnection(address, function () {
+                proxy.write(buf);
+                conn.pipe(proxy).pipe(conn);
             });
-        }
+        });
+    }
+
+    net.createServer(tcpConnection).listen(basePort);
+    var proxy = new httpProxy.createProxyServer(httpProxyOptions);
+    var httpServer = http.createServer(function(req, res){
+        proxy.web(req, res);
+    });
+    var proxyServer = https.createServer(httpsOptions, function(req, res){
+        proxy.web(req, res);
+    });
+
+    proxyServer.on('upgrade', function(req, socket, head){
+        proxy.ws(req, socket, head);
+    });
+
+    httpServer.listen(httpPort);
+    proxyServer.listen(httpsPort);
 };
 
 
