@@ -237,12 +237,14 @@ function svg(){
 };
 
 function html(){
-    gulp.src(config.outputDir + '/*.html')
-        .pipe(reload);
+    return gulp.src([
+        config.inputDir + '/html/**/*.html'])
+        .pipe(gulp.dest(config.outputDir + '/html'));
 };
 
 function watch(){
-    gulp.watch([config.outputDir + '/*.html'], html);
+    gulp.watch(config.inputDir + '/html/**/*.html', html);
+    gulp.watch(config.outputDir + '/html/**/*.html').on('change', reload);
     gulp.watch(config.inputDir + '/scss/**/*.scss', sass);
     gulp.watch([config.inputDir + '/img/*.{jpg,jpeg,png}', config.inputDir + '/html/assets/*.{jpg,jpeg,png}'], image);
     gulp.watch([config.inputDir + '/svg/*.svg', config.inputDir + '/html/assets/*.svg'], svg);
