@@ -22,6 +22,7 @@
     "gulp-sass": "^2.3.2",
     "gulp-sourcemaps": "^2.4.1",
     "gulp-svgmin": "^1.2.3",
+    "gulp-uglify": "^2.1.2",
     "http-proxy-damon": "^1.15.2",
     "minimist": "^1.2.0"
   },

@@ -4,16 +4,18 @@ var gulp = require('gulp');
 
 // Include plugins
 var sassCompiler = require('gulp-sass');
-var minifyCss = require('gulp-clean-css');
-var rename = require('gulp-rename');
-var browserSync = require('browser-sync');
-const image = require('gulp-image');
-var inlineSvg = require('gulp-inline-svg');
-var svgmin = require('gulp-svgmin');
-var minimist = require('minimist');
-var fs    = require('fs');
-var stream = browserSync.stream;
-var reload = browserSync.reload;
+var minifyCss    = require('gulp-clean-css');
+var minifyJs     = require('gulp-uglify');
+var rename       = require('gulp-rename');
+var browserSync  = require('browser-sync');
+const image      = require('gulp-image');
+var inlineSvg    = require('gulp-inline-svg');
+var svgmin       = require('gulp-svgmin');
+var minimist     = require('minimist');
+var fs           = require('fs');
+var sourcemaps   = require('gulp-sourcemaps');
+var stream       = browserSync.stream;
+var reload       = browserSync.reload;
 
 var knownOptions = {
     string: 'proxy',
@@ -29,9 +31,9 @@ var config = {
     outputDir: './public/'
 };
 
-var basePort = 8080;
-var httpPort = 8081;
-var httpsPort = 8082;
+var basePort        = 8080;
+var httpPort        = 8081;
+var httpsPort       = 8082;
 var browserSyncPort = 8088;
 var localDomain = 'localhost:' + basePort;
 
@@ -147,6 +149,10 @@ function liveReload(){
         proxy.web(req, res);
     });
 
+    httpServer.on('upgrade', function(req, socket, head){
+        proxy.ws(req, socket, head);
+    });
+
     proxyServer.on('upgrade', function(req, socket, head){
         proxy.ws(req, socket, head);
     });
@@ -157,7 +163,6 @@ function liveReload(){
 
 
 function sass(){
-    var sourcemaps   = require('gulp-sourcemaps');
     var autoprefixer = require('gulp-autoprefixer');
     var autoprefixerOptions = {
         browsers: ['last 2 versions', '> 5%', 'Firefox ESR']
@@ -227,6 +232,19 @@ function image_min(){
         .pipe(stream());
 };
 
+function js_min(){
+    return gulp.src([
+        config.inputDir + '/js/*.js'])
+        .pipe(sourcemaps.init())
+        .pipe(minifyJs())
+        .pipe(rename({
+            suffix: ".min"
+        }))
+        .pipe(sourcemaps.write( '.' ))
+        .pipe(gulp.dest(config.outputDir + '/js'))
+        .pipe(stream());
+};
+
 function svg(){
     return gulp.src([
         config.inputDir + '/svg/*.svg',
@@ -245,6 +263,7 @@ function html(){
 function watch(){
     gulp.watch(config.inputDir + '/html/**/*.html', html);
     gulp.watch(config.outputDir + '/html/**/*.html').on('change', reload);
+    gulp.watch(config.inputDir + '/js/*.js', js_min);
     gulp.watch(config.inputDir + '/scss/**/*.scss', sass);
     gulp.watch([config.inputDir + '/img/*.{jpg,jpeg,png}', config.inputDir + '/html/assets/*.{jpg,jpeg,png}'], image);
     gulp.watch([config.inputDir + '/svg/*.svg', config.inputDir + '/html/assets/*.svg'], svg);
@@ -261,13 +280,14 @@ exports.bootstrap_js      = bootstrap_js;
 exports.fontawesome_fonts = fontawesome_fonts;
 exports.fontawesome_css   = fontawesome_css;
 exports.image_min         = image_min;
+exports.js_min            = js_min;
 exports.liveReload        = liveReload;
 exports.watch             = watch;
 
 if(options.nolithium){
-    var build = gulp.series(svg, html_assets, gulp.parallel(sass, html, image_min, bootstrap_js, bootstrap_fonts, fontawesome_css, fontawesome_fonts));
+    var build = gulp.series(svg, html_assets, gulp.parallel(sass, html, image_min, js_min, bootstrap_js, bootstrap_fonts, fontawesome_css, fontawesome_fonts));
 } else {
-    var build = gulp.series(svg, html_assets, gulp.parallel(sass, image_min));
+    var build = gulp.series(svg, html_assets, gulp.parallel(sass, image_min, js_min));
 }
 
 gulp.task('build', build);
