@@ -39,7 +39,7 @@ $ bower install
 $ gulp --proxy "http://stage.prod.site"
 ```
 
-###http mode
+###normal mode
 ```
 $ gulp
 
