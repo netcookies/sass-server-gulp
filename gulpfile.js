@@ -5,7 +5,7 @@ var gulp = require('gulp');
 // Include plugins
 var sassCompiler = require('gulp-sass');
 var minifyCss    = require('gulp-clean-css');
-var minifyJs     = require('gulp-uglify');
+var minifyJs     = require('gulp-uglify-es').default;
 var rename       = require('gulp-rename');
 var browserSync  = require('browser-sync');
 const image      = require('gulp-image');
