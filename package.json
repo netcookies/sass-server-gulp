@@ -11,7 +11,6 @@
   "dependencies": {
     "gulp": "gulpjs/gulp#4.0",
     "gulp-autoprefixer": "^3.1.1",
-    "gulp-bower": "^0.0.13",
     "gulp-clean-css": "^3.0.3",
     "gulp-cli": "^1.2.2",
     "gulp-connect": "^5.0.0",
