@@ -26,7 +26,7 @@ var knownOptions = {
 var options = minimist(process.argv.slice(2), knownOptions);
 
 var config = {
-    bowerDir: './bower_components',
+    componentDir: './node_modules',
     inputDir: './src',
     outputDir: './public/'
 };
@@ -44,7 +44,8 @@ if(options.nolithium){
         outputStyle: 'expanded',
         precision: 8,
         includePaths: [
-            config.bowerDir + '/bootstrap-sass/assets/stylesheets'
+            config.componentDir + '/bootstrap/scss',
+            config.componentDir + '/font-awesome/scss'
         ]
     };
 } else {
@@ -187,31 +188,20 @@ function sass(){
         .pipe(stream({match: '**/*.css'}));
 };
 
-function bootstrap_fonts(){
-    return gulp.src(config.bowerDir + '/bootstrap-sass/assets/fonts/**/*')
-        .pipe(gulp.dest(config.outputDir + '/fonts'));
-};
-
 function bootstrap_js(){
-    return gulp.src(config.bowerDir + '/bootstrap-sass/assets/javascripts/bootstrap.min.js')
+    return gulp.src(config.componentDir + '/bootstrap/dist/js/bootstrap.min.js')
         .pipe(gulp.dest(config.outputDir + '/js'));
 };
 
 function jquery(){
-    return gulp.src(config.bowerDir + '/jquery-1.11.3/dist/jquery.min.*')
+    return gulp.src(config.componentDir + '/jquery-1.11.3/dist/jquery.min.*')
         .pipe(gulp.dest(config.outputDir + '/js'));
 };
 
 function fontawesome_fonts(){
     return gulp.src([
-        config.bowerDir + '/font-awesome/fonts/*'])
-        .pipe(gulp.dest(config.outputDir + '/fonts/font-awesome/fonts'));
-};
-
-function fontawesome_css(){
-    return gulp.src([
-        config.bowerDir + '/font-awesome/css/*'])
-        .pipe(gulp.dest(config.outputDir + '/fonts/font-awesome/css'));
+        config.componentDir + '/font-awesome/fonts/*'])
+        .pipe(gulp.dest(config.outputDir + '/fonts'));
 };
 
 function html_assets(){
@@ -275,17 +265,15 @@ exports.sass              = sass;
 exports.html              = html;
 exports.html_assets       = html_assets;
 exports.jquery            = jquery;
-exports.bootstrap_fonts   = bootstrap_fonts;
 exports.bootstrap_js      = bootstrap_js;
 exports.fontawesome_fonts = fontawesome_fonts;
-exports.fontawesome_css   = fontawesome_css;
 exports.image_min         = image_min;
 exports.js_min            = js_min;
 exports.liveReload        = liveReload;
 exports.watch             = watch;
 
 if(options.nolithium){
-    var build = gulp.series(svg, html_assets, gulp.parallel(sass, html, image_min, js_min, bootstrap_js, bootstrap_fonts, fontawesome_css, fontawesome_fonts));
+    var build = gulp.series(svg, html_assets, gulp.parallel(sass, html, image_min, js_min, bootstrap_js, fontawesome_fonts));
 } else {
     var build = gulp.series(svg, html_assets, gulp.parallel(sass, image_min, js_min));
 }
