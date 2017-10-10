@@ -181,11 +181,9 @@ function sass(){
             suffix: ".min"
         }))
         .pipe(autoprefixer(autoprefixerOptions))
-        .pipe(sourcemaps.write({
-            sourceRoot: '../scss'
-        }))
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(config.outputDir +'/css'))
-        .pipe(stream({match: '**/*.css'}));
+        .pipe(stream());
 };
 
 function bootstrap_js(){
