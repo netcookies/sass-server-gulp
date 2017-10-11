@@ -7,15 +7,20 @@ var sassCompiler = require('gulp-sass');
 var minifyCss    = require('gulp-clean-css');
 var minifyJs     = require('gulp-uglify-es').default;
 var rename       = require('gulp-rename');
-var browserSync  = require('browser-sync');
+var browserSync  = require('browser-sync').create();
 const image      = require('gulp-image');
 var inlineSvg    = require('gulp-inline-svg');
 var svgmin       = require('gulp-svgmin');
 var minimist     = require('minimist');
 var fs           = require('fs');
 var sourcemaps   = require('gulp-sourcemaps');
+var cache        = require('gulp-cached');
+var concat       = require('gulp-concat');
+var remember     = require('gulp-remember');
+
 var stream       = browserSync.stream;
 var reload       = browserSync.reload;
+
 
 var knownOptions = {
     string: 'proxy',
@@ -30,6 +35,40 @@ var config = {
     inputDir: './src',
     outputDir: './public/'
 };
+
+const paths = {
+    image: {
+        src: config.inputDir + '/img/*.{jpg,jpeg,png,gif}',
+        dst: config.outputDir + 'img'
+    },
+    css: {
+        src: [config.inputDir + '/scss/*.scss', config.inputDir + '/scss/**/_*.scss'],
+        dst: config.outputDir + 'css'
+    },
+    js: {
+        src: config.inputDir + '/js/*.js',
+        libs: config.inputDir + '/js/libs/**/*.js',
+        dst: config.outputDir + 'js'
+    },
+    html: {
+        src: config.inputDir + '/html/**/*.html',
+        dst: config.outputDir + 'html',
+        watch: config.outputDir + '**/*.html'
+    },
+    assets: {
+        src: config.inputDir + '/html/assets/**/*',
+        imgSrc: config.inputDir + '/html/assets/*.{jpg,jpeg,png,gif}',
+        dst: config.outputDir + 'html/assets'
+    },
+    fonts: {
+        src: config.inputDir + '/html/assets/*.{eot,svg,ttf,woff}',
+        dst: config.outputDir + 'html/assets'
+    },
+    svg: {
+        src: [config.inputDir + '/svg/*.svg', config.inputDir + '/html/assets/*.svg'],
+        dst: config.inputDir + '/scss'
+    }
+}
 
 var basePort        = 8080;
 var httpPort        = 8081;
@@ -87,23 +126,23 @@ if(options.proxy === 'none'){
         serveStatic: [
             {
                 route: '/css',
-                dir: [config.outputDir + '/css']
+                dir: [paths.css.dst]
             },
             {
                 route: '/img',
-                dir: [config.outputDir + '/img']
+                dir: [paths.image.dst]
             },
             {
                 route: '/fonts',
-                dir: [config.outputDir + '/fonts']
+                dir: [paths.fonts.dst]
             },
             {
                 route: '/js',
-                dir: [config.outputDir + '/js']
+                dir: [paths.js.dst]
             },
             {
                 route: '/html/assets',
-                dir: [config.outputDir + '/html/assets']
+                dir: [paths.assets.dst]
             }
         ]
     };
@@ -121,9 +160,8 @@ var httpsOptions = {
     cert: fs.readFileSync('localhost.cert.pem', 'utf8')
 }
 
-
 function liveReload(){
-    browserSync(browserSyncOptions);
+    browserSync.init(browserSyncOptions);
 
     var net = require('net');
     var http = require('http');
@@ -169,7 +207,8 @@ function sass(){
         browsers: ['last 2 versions', '> 5%', 'Firefox ESR']
     };
 
-    return gulp.src(config.inputDir + '/scss/*.scss')
+    return gulp.src(paths.css.src)
+        .pipe(cache('sass'))    // only pass through changed files
         .pipe(sourcemaps.init())
         .pipe(sassCompiler(sassOptions).on('error', sassCompiler.logError))
         .pipe(minifyCss({
@@ -182,7 +221,8 @@ function sass(){
         }))
         .pipe(autoprefixer(autoprefixerOptions))
         .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(config.outputDir +'/css'))
+        .pipe(remember('sass')) // add back all files to the stream
+        .pipe(gulp.dest(paths.css.dst))
         .pipe(stream());
 };
 
@@ -199,30 +239,31 @@ function jquery(){
 function fontawesome_fonts(){
     return gulp.src([
         config.componentDir + '/font-awesome/fonts/*'])
-        .pipe(gulp.dest(config.outputDir + '/fonts'));
+        .pipe(gulp.dest(paths.fonts.dst));
 };
 
 function html_assets(){
-    return gulp.src(config.inputDir + 'html/assets/**/*')
-        .pipe(gulp.dest(config.outputDir + '/html/assets'));
+    return gulp.src(paths.assets.src)
+        .pipe(gulp.dest(paths.assets.dst));
 };
 
-function image_min(){
-    gulp.src([
-        config.inputDir + '/html/assets/*.{jpg,jpeg,png}'])
+function minifyImg_assets() {
+    return gulp.src(paths.assets.imgSrc, {since: gulp.lastRun(minifyImg_assets)})
         .pipe(image({zopflipng: false}))
-        .pipe(gulp.dest(config.outputDir + '/html/assets'))
+        .pipe(gulp.dest(paths.assets.dst))
         .pipe(stream());
-    return gulp.src([
-        config.inputDir + '/img/*.{jpg,jpeg,png,gif}'])
+}
+
+function minifyImg(){
+    return gulp.src(paths.image.src, {since: gulp.lastRun(minifyImg)})
         .pipe(image({zopflipng: false}))
-        .pipe(gulp.dest(config.outputDir + '/img'))
+        .pipe(gulp.dest(paths.image.dst))
         .pipe(stream());
 };
 
 function js_min(){
-    return gulp.src([
-        config.inputDir + '/js/*.js'])
+    return gulp.src(paths.js.src)
+        .pipe(cache('js_min'))    // only pass through changed files
         .pipe(sourcemaps.init())
         .pipe(minifyJs().on('error', function(e) {
             console.error(e.message);
@@ -232,32 +273,51 @@ function js_min(){
             suffix: ".min"
         }))
         .pipe(sourcemaps.write( '.' ))
-        .pipe(gulp.dest(config.outputDir + '/js'))
+        .pipe(remember('js_min')) // add back all files to the stream
+        .pipe(gulp.dest(paths.js.dst));
+};
+
+function js_bundle(){
+    return gulp.src(paths.js.libs)
+        .pipe(concat('bundle.js'))
+        .pipe(cache('js_bundle'))    // only pass through changed files
+        .pipe(sourcemaps.init())
+        .pipe(minifyJs().on('error', function(e) {
+            console.error(e.message);
+            this.emit('end');
+        }))
+        .pipe(rename({
+            suffix: ".min"
+        }))
+        .pipe(sourcemaps.write( '.' ))
+        .pipe(remember('js_bundle')) // add back all files to the stream
+        .pipe(gulp.dest(paths.js.dst))
         .pipe(stream());
 };
 
 function svg(){
-    return gulp.src([
-        config.inputDir + '/svg/*.svg',
-        config.inputDir + '/html/assets/*.svg'])
+    return gulp.src(paths.svg.src)
         .pipe(svgmin())
         .pipe(inlineSvg())
-        .pipe(gulp.dest(config.inputDir + '/scss/'));
+        .pipe(gulp.dest(paths.svg.dst));
 };
 
 function html(){
-    return gulp.src([
-        config.inputDir + '/html/**/*.html'])
-        .pipe(gulp.dest(config.outputDir + '/html'));
+    return gulp.src(paths.html.src)
+        .pipe(gulp.dest(paths.html.dst));
 };
 
 function watch(){
-    gulp.watch(config.inputDir + '/html/**/*.html', html);
-    gulp.watch(config.outputDir + '/html/**/*.html').on('change', reload);
-    gulp.watch(config.inputDir + '/js/*.js', js_min);
-    gulp.watch(config.inputDir + '/scss/**/*.scss', sass);
-    gulp.watch([config.inputDir + '/img/*.{jpg,jpeg,png,gif}', config.inputDir + '/html/assets/*.{jpg,jpeg,png,gif}'], image);
-    gulp.watch([config.inputDir + '/svg/*.svg', config.inputDir + '/html/assets/*.svg'], svg);
+    gulp.watch(paths.html.src, html);
+    gulp.watch(paths.html.watch).on('change', function(path, stats) {
+        console.log('File ' + path + ' was changed');
+        reload();
+    });
+    gulp.watch(paths.js.src, js_min);
+    gulp.watch(paths.css.src, sass);
+    gulp.watch(paths.image.src, minifyImg);
+    gulp.watch(paths.assets.imgSrc, minifyImg_assets);
+    gulp.watch(paths.svg.src, svg);
 };
 
 
@@ -265,18 +325,20 @@ exports.svg               = svg;
 exports.sass              = sass;
 exports.html              = html;
 exports.html_assets       = html_assets;
+exports.minifyImg_assets  = minifyImg_assets;
 exports.jquery            = jquery;
 exports.bootstrap_js      = bootstrap_js;
 exports.fontawesome_fonts = fontawesome_fonts;
-exports.image_min         = image_min;
+exports.minifyImg         = minifyImg;
 exports.js_min            = js_min;
+exports.js_bundle         = js_bundle;
 exports.liveReload        = liveReload;
 exports.watch             = watch;
 
 if(options.nolithium){
-    var build = gulp.series(svg, html_assets, gulp.parallel(sass, html, image_min, js_min, bootstrap_js, fontawesome_fonts));
+    var build = gulp.series(svg, html_assets, gulp.parallel(sass, html, minifyImg, js_min, js_bundle, bootstrap_js, fontawesome_fonts));
 } else {
-    var build = gulp.series(svg, html_assets, gulp.parallel(sass, image_min, js_min));
+    var build = gulp.series(svg, html_assets, gulp.parallel(sass, minifyImg, minifyImg_assets, js_min, js_bundle));
 }
 
 gulp.task('build', build);
