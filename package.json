@@ -21,7 +21,6 @@
     "gulp-rename":         "^1.2.2",
     "gulp-sass":           "https://github.com/EpicOkapi/gulp-sass",
     "gulp-sourcemaps":     "^2.6.1",
-    "gulp-svgmin":         "^1.2.4",
     "gulp-uglify":         "^3.0.0",
     "gulp-cached":         "^1.1.1",
     "gulp-remember":       "^0.3.1",
