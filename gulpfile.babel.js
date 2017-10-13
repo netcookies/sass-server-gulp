@@ -9,9 +9,8 @@ import minifyCss    from 'gulp-clean-css';
 import minifyJs     from 'gulp-uglify';
 import rename       from 'gulp-rename';
 import browserSync  from 'browser-sync';
-import image        from 'gulp-image';
+import imagemin     from 'gulp-imagemin';
 import inlineSvg    from 'gulp-inline-svg';
-import svgmin       from 'gulp-svgmin';
 import minimist     from 'minimist';
 import fs           from 'fs';
 import sourcemaps   from 'gulp-sourcemaps';
@@ -288,7 +287,7 @@ export function html_assets(){
 // Task: compress images in html/assets
 export function minifyImg_assets() {
     return gulp.src(paths.assets.imgSrc, {since: gulp.lastRun(minifyImg_assets)})
-        .pipe(image({zopflipng: false}))
+        .pipe(imagemin())
         .pipe(gulp.dest(paths.assets.dst))
         .pipe(stream());
 }
@@ -296,7 +295,7 @@ export function minifyImg_assets() {
 // Task: compress images in /img
 export function minifyImg(){
     return gulp.src(paths.image.src, {since: gulp.lastRun(minifyImg)})
-        .pipe(image({zopflipng: false}))
+        .pipe(imagemin())
         .pipe(gulp.dest(paths.image.dst))
         .pipe(stream());
 };
@@ -341,7 +340,7 @@ export function js_bundle(){
 // Task: compress svg in /svg and concat them into one file;
 export function svg(){
     return gulp.src(paths.svg.src)
-        .pipe(svgmin())
+        .pipe(imagemin())
         .pipe(inlineSvg())
         .pipe(gulp.dest(paths.svg.dst));
 };
