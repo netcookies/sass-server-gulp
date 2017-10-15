@@ -62,7 +62,7 @@ const paths = {
         dst: config.outputDir + 'js'
     },
     html: {
-        src: config.inputDir + '/html/*.html',
+        src: config.inputDir + '/html/**/*.html',
         dst: config.outputDir + 'html',
         watch: config.outputDir + '**/*.html'
     },
