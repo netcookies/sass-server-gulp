@@ -62,7 +62,7 @@ const paths = {
         dst: config.outputDir + 'js'
     },
     html: {
-        src: config.inputDir + '/html/**/*.html',
+        src: config.inputDir + '/html/*.html',
         dst: config.outputDir + 'html',
         watch: config.outputDir + '**/*.html'
     },
@@ -243,8 +243,8 @@ export function sass(){
     return gulp.src(paths.css.src)
         .pipe(cache('sass'))    // only pass through changed files
         .pipe(sourcemaps.init())
-        .pipe(sassCompiler(sassOptions).on('error', function (e) {
-            sassCompiler.logError;
+        .pipe(sassCompiler(sassOptions).on('error', function (error) {
+            sassCompiler.logError(error);
             delete cache.caches['sass'];
             this.emit('end');
         }))
@@ -312,6 +312,7 @@ export function js_min(){
         .pipe(sourcemaps.init())
         .pipe(minifyJs().on('error', function(e) {
             console.error(e.message);
+            delete cache.caches['js_min'];
             this.emit('end');
         }))
         .pipe(rename({
@@ -330,6 +331,7 @@ export function js_bundle(){
         .pipe(sourcemaps.init())
         .pipe(minifyJs().on('error', function(e) {
             console.error(e.message);
+            delete cache.caches['js_min'];
             this.emit('end');
         }))
         .pipe(rename({
