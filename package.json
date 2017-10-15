@@ -21,7 +21,7 @@
       "gulp-imagemin":       "^3.4.0",
       "gulp-inline-svg":     "^1.1.1",
       "gulp-rename":         "^1.2.2",
-      "gulp-sass":           "netcookies/gulp-sass",
+      "gulp-sass":           "https://github.com/netcookies/gulp-sass",
       "gulp-sourcemaps":     "^2.6.1",
       "gulp-uglify":         "^3.0.0",
       "gulp-cached":         "^1.1.1",
