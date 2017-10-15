@@ -243,7 +243,11 @@ export function sass(){
     return gulp.src(paths.css.src)
         .pipe(cache('sass'))    // only pass through changed files
         .pipe(sourcemaps.init())
-        .pipe(sassCompiler(sassOptions).on('error', sassCompiler.logError))
+        .pipe(sassCompiler(sassOptions).on('error', function (e) {
+            sassCompiler.logError;
+            delete cache.caches['sass'];
+            this.emit('end');
+        }))
         .pipe(minifyCss({
             compatibility: 'ie8'
             ,specialComments: 0
