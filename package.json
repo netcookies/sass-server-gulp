@@ -13,7 +13,7 @@
       "gulp-babel":          "^7.0.0",
       "babel-register":      "^6.26.0",
       "babel-preset-env":    "^1.6.0",
-      "gulp-cli":            "^1.4.0",
+      "gulp-cli":            "^1.4.0"
   },
   "devDependencies": {
       "gulp-autoprefixer":   "^4.0.0",
@@ -21,7 +21,7 @@
       "gulp-imagemin":       "^3.4.0",
       "gulp-inline-svg":     "^1.1.1",
       "gulp-rename":         "^1.2.2",
-      "gulp-sass":           "https://github.com/netcookies/gulp-sass",
+      "gulp-sass":           "netcookies/gulp-sass",
       "gulp-sourcemaps":     "^2.6.1",
       "gulp-uglify":         "^3.0.0",
       "gulp-cached":         "^1.1.1",
