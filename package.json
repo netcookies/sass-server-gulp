@@ -24,8 +24,6 @@
       "gulp-sass":           "netcookies/gulp-sass",
       "gulp-sourcemaps":     "^2.6.1",
       "gulp-uglify":         "^3.0.0",
-      "gulp-cached":         "^1.1.1",
-      "gulp-remember":       "^0.3.1",
       "gulp-concat":         "^2.6.1",
       "http-proxy-damon":    "^1.15.2",
       "del":                 "^3.0.0",
