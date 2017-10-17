@@ -19,6 +19,7 @@ import concat       from 'gulp-concat';
 import remember     from 'gulp-remember';
 import autoprefixer from 'gulp-autoprefixer';
 import del          from 'del';
+import path         from 'path';
 
 import net          from 'net';
 import http         from 'http';
@@ -240,7 +241,7 @@ export function sass(){
         browsers: ['last 2 versions', '> 5%', 'Firefox ESR']
     };
 
-    return gulp.src(paths.css.src)
+    return gulp.src(paths.css.src, since: {gulp.lastRun('sass')})
         .pipe(cache('sass'))    // only pass through changed files
         .pipe(sourcemaps.init())
         .pipe(sassCompiler(sassOptions).on('error', function (error) {
@@ -253,12 +254,12 @@ export function sass(){
             ,specialComments: 0
             //,format: 'keep-breaks'
         }))
+        .pipe(remember('sass')) // add back all files to the stream
         .pipe(rename({
             suffix: ".min"
         }))
         .pipe(autoprefixer(autoprefixerOptions))
         .pipe(sourcemaps.write('.'))
-        .pipe(remember('sass')) // add back all files to the stream
         .pipe(gulp.dest(paths.css.dst))
         .pipe(stream());
 };
@@ -290,7 +291,7 @@ export function html_assets(){
 
 // Task: compress images in html/assets
 export function minifyImg_assets() {
-    return gulp.src(paths.assets.imgSrc, {since: gulp.lastRun(minifyImg_assets)})
+    return gulp.src(paths.assets.imgSrc, since: {gulp.lastRun(minifyImg_assets)})
         .pipe(imagemin())
         .pipe(gulp.dest(paths.assets.dst))
         .pipe(stream());
@@ -298,7 +299,7 @@ export function minifyImg_assets() {
 
 // Task: compress images in /img
 export function minifyImg(){
-    return gulp.src(paths.image.src, {since: gulp.lastRun(minifyImg)})
+    return gulp.src(paths.image.src, since: {gulp.lastRun(minifyImg)})
         .pipe(imagemin())
         .pipe(gulp.dest(paths.image.dst))
         .pipe(stream());
@@ -306,7 +307,7 @@ export function minifyImg(){
 
 // Task: minify Js put them into dist
 export function js_min(){
-    return gulp.src(paths.js.src)
+    return gulp.src(paths.js.src, since: {gulp.lastRun('js_min')})
         .pipe(babel())
         .pipe(cache('js_min'))    // only pass through changed files
         .pipe(sourcemaps.init())
@@ -315,30 +316,30 @@ export function js_min(){
             delete cache.caches['js_min'];
             this.emit('end');
         }))
+        .pipe(remember('js_min')) // add back all files to the stream
         .pipe(rename({
             suffix: ".min"
         }))
         .pipe(sourcemaps.write( '.' ))
-        .pipe(remember('js_min')) // add back all files to the stream
         .pipe(gulp.dest(paths.js.dst));
 };
 
 // Task: concat JS libs files into one file then put them into dist
 export function js_bundle(){
-    return gulp.src(paths.js.libs)
-        .pipe(concat('bundle.js'))
+    return gulp.src(paths.js.libs, since: {gulp.lastRun('js_bundle')})
         .pipe(cache('js_bundle'))    // only pass through changed files
+        .pipe(concat('bundle.js'))
         .pipe(sourcemaps.init())
         .pipe(minifyJs().on('error', function(e) {
             console.error(e.message);
             delete cache.caches['js_min'];
             this.emit('end');
         }))
+        .pipe(remember('js_bundle')) // add back all files to the stream
         .pipe(rename({
             suffix: ".min"
         }))
         .pipe(sourcemaps.write( '.' ))
-        .pipe(remember('js_bundle')) // add back all files to the stream
         .pipe(gulp.dest(paths.js.dst))
         .pipe(stream());
 };
@@ -361,9 +362,18 @@ export function html(){
 export function watch(){
     gulp.watch(paths.html.src, html);
     gulp.watch(paths.html.watch, reload);
-    gulp.watch(paths.js.src, js_min);
-    gulp.watch(paths.js.libs, js_bundle);
-    gulp.watch(paths.css.src, sass);
+    gulp.watch(paths.js.src, js_min).on('unlink', function(filepath) {
+        remember.forget('sass', path.resolve(filepath));
+        delete cached.caches.sass[path.resolve(filepath)];
+    };
+    gulp.watch(paths.js.libs, js_bundle).on('unlink', function(filepath) {
+        remember.forget('sass', path.resolve(filepath));
+        delete cached.caches.sass[path.resolve(filepath)];
+    };
+    gulp.watch(paths.css.src, sass).on('unlink', function(filepath) {
+        remember.forget('sass', path.resolve(filepath));
+        delete cached.caches.sass[path.resolve(filepath)];
+    };
     gulp.watch(paths.image.src, minifyImg);
     gulp.watch(paths.assets.imgSrc, minifyImg_assets);
     gulp.watch(paths.svg.src, svg);
