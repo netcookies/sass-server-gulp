@@ -1,34 +1,34 @@
 {
-  "name": "sassGulp",
-  "version": "5.0.0",
-  "description": "Sass Gulp Server",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Andrew Li",
-  "license": "MIT",
-  "dependencies": {
-      "gulp":                "gulpjs/gulp#4.0",
-      "gulp-babel":          "^7.0.0",
-      "babel-register":      "^6.26.0",
-      "babel-preset-env":    "^1.6.0",
-      "gulp-cli":            "^1.4.0"
-  },
-  "devDependencies": {
-      "gulp-autoprefixer":   "^4.0.0",
-      "gulp-clean-css":      "^3.9.0",
-      "gulp-imagemin":       "^3.4.0",
-      "gulp-inline-svg":     "^1.1.1",
-      "gulp-rename":         "^1.2.2",
-      "gulp-sass":           "netcookies/gulp-sass",
-      "gulp-sourcemaps":     "^2.6.1",
-      "gulp-uglify":         "^3.0.0",
-      "gulp-concat":         "^2.6.1",
-      "http-proxy-damon":    "^1.15.2",
-      "del":                 "^3.0.0",
-      "minimist":            "^1.2.0",
-      "browser-sync":        "^2.23.3",
-      "megatype":            "^1.1.2"
-  }
+    "name": "sassGulp",
+    "version": "6.0.0",
+    "description": "Sass Gulp Server",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Andrew Li",
+    "license": "MIT",
+    "dependencies": {
+        "babel-preset-env": "^1.6.0",
+        "babel-register": "^6.26.0",
+        "gulp": "^4.0.0",
+        "gulp-babel": "^7.0.0",
+        "gulp-cli": "^1.4.0"
+    },
+    "devDependencies": {
+        "browser-sync": "^2.23.3",
+        "del": "^3.0.0",
+        "gulp-autoprefixer": "^4.0.0",
+        "gulp-clean-css": "^3.9.0",
+        "gulp-concat": "^2.6.1",
+        "gulp-imagemin": "^3.4.0",
+        "gulp-inline-svg": "^1.1.1",
+        "gulp-rename": "^1.2.2",
+        "gulp-sass": "netcookies/gulp-sass",
+        "gulp-sourcemaps": "^2.6.1",
+        "gulp-uglify": "^3.0.0",
+        "http-proxy-damon": "^1.15.2",
+        "megatype": "^1.1.2",
+        "minimist": "^1.2.0"
+    }
 }
