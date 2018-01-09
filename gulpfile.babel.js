@@ -90,7 +90,7 @@ export const clean = () => del([
     paths.img.dst,
     paths.js.dst + '/**',
     '!' + paths.js.dst,
-    '!' + paths.js.dst + '/vendor/**'
+    '!' + paths.js.dst + '/libs/**'
 ]).then(paths => {
     console.log('Deleted files and folders:\n', paths.join('\n'));
 });
