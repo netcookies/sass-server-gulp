@@ -23,61 +23,20 @@ import http         from 'http';
 import https        from 'https';
 import httpProxy    from 'http-proxy';
 
-// configs
-
-const basePort        = 8080;
-const httpPort        = 8081;
-const httpsPort       = 8082;
-const browserSyncPort = 8088;
-const localDomain = 'localhost:' + basePort;
+// console arguments
 
 const knownOptions = {
-    string: 'proxy',
-    boolean: ['nolocal', 'vendors'],
-    default: { proxy: 'none' }
+    boolean: ['nolocal']
 };
 
 const options = minimist(process.argv.slice(2), knownOptions);
 
-const config = {
-    componentDir: './node_modules',
-    inputDir: './src',
-    outputDir: './public/'
-};
+// configs
 
-const paths = {
-    image: {
-        src: config.inputDir + '/img/*.{jpg,jpeg,png,gif}',
-        dst: config.outputDir + 'img'
-    },
-    css: {
-        src: [config.inputDir + '/scss/*.scss', config.inputDir + '/scss/**/_*.scss'],
-        dst: config.outputDir + 'css'
-    },
-    js: {
-        src: config.inputDir + '/js/*.js',
-        libs: config.inputDir + '/js/libs/**/*.js',
-        dst: config.outputDir + 'js'
-    },
-    html: {
-        src: config.inputDir + '/html/**/*.html',
-        dst: config.outputDir + 'html',
-        watch: config.outputDir + '**/*.html'
-    },
-    assets: {
-        src: config.inputDir + '/html/assets/**/*',
-        imgSrc: config.inputDir + '/html/assets/*.{jpg,jpeg,png,gif}',
-        dst: config.outputDir + 'html/assets'
-    },
-    fonts: {
-        src: config.inputDir + '/html/assets/*.{eot,svg,ttf,woff}',
-        dst: config.outputDir + 'html/assets'
-    },
-    svg: {
-        src: [config.inputDir + '/svg/*.svg', config.inputDir + '/html/assets/*.svg'],
-        dst: config.inputDir + '/scss'
-    }
-};
+import {ports, config} from 'conf/conf';
+import paths from 'conf/paths';
+
+// sass options
 
 let sassOptions = {
     errLogToConsole: true,
@@ -86,67 +45,35 @@ let sassOptions = {
     precision: 8
 };
 
+// browserSync options
+
 let browserSyncOptions = {
     server: {
         baseDir: [config.outputDir],
         directory: true
     },
     open: false,
-    port: browserSyncPort
-};
-
-if(options.vendors){
-        sassOptions["includePaths"] = [
-            config.componentDir + '/bootstrap/scss',
-            config.componentDir + '/font-awesome/scss'
-        ];
+    port: ports.browserSyncPort
 };
 
 if(!options.nolocal){
     browserSyncOptions["socket"] = {
-        domain: localDomain
+        domain: 'localhost:' + ports.basePort
     }
 }
 
-if(options.proxy !== 'none'){
-    let browserSyncOptions = {
-        proxy: options.proxy,
-        port: browserSyncPort,
-        serveStatic: [
-            {
-                route: '/css',
-                dir: [paths.css.dst]
-            },
-            {
-                route: '/img',
-                dir: [paths.image.dst]
-            },
-            {
-                route: '/fonts',
-                dir: [paths.fonts.dst]
-            },
-            {
-                route: '/js',
-                dir: [paths.js.dst]
-            },
-            {
-                route: '/html/assets',
-                dir: [paths.assets.dst]
-            }
-        ]
-    };
-}
+// http/https proxy opionts
 
 const httpProxyOptions = {
     target: {
         host: 'localhost',
-        port: browserSyncPort
+        port: ports.browserSyncPort
     }
 };
 
 const sslCerts = {
-    key: fs.readFileSync('localhost.key.pem', 'utf8'),
-    cert: fs.readFileSync('localhost.cert.pem', 'utf8')
+    key: fs.readFileSync('certs/localhost.key.pem', 'utf8'),
+    cert: fs.readFileSync('certs/localhost.cert.pem', 'utf8')
 }
 
 // Task: clean assets before run
@@ -175,7 +102,7 @@ export function liveReload(done){
     function tcpConnection(conn) {
         conn.once('data', function (buf) {
             // A TLS handshake record starts with byte 22.
-            let address = (buf[0] === 22) ? httpsPort : httpPort;
+            let address = (buf[0] === 22) ? ports.httpsPort : ports.httpPort;
             let proxy = net.createConnection(address, function () {
                 proxy.write(buf);
                 conn.pipe(proxy).pipe(conn);
@@ -183,7 +110,7 @@ export function liveReload(done){
         });
     }
 
-    net.createServer(tcpConnection).listen(basePort);
+    net.createServer(tcpConnection).listen(ports.basePort);
     let proxy = new httpProxy.createProxyServer(httpProxyOptions);
     let httpServer = http.createServer(function(req, res){
         proxy.web(req, res);
@@ -222,11 +149,11 @@ export function liveReload(done){
         });
     });
 
-    httpServer.listen(httpPort).on('listening', () => {
-        console.log('HTTP Server listening at ' + httpPort + ' port');
+    httpServer.listen(ports.httpPort).on('listening', () => {
+        console.log('HTTP Server listening at ' + ports.httpPort + ' port');
     });
-    httpsServer.listen(httpsPort).on('listening', () => {
-        console.log('HTTPS Server listening at ' + httpPort + ' port');
+    httpsServer.listen(ports.httpsPort).on('listening', () => {
+        console.log('HTTPS Server listening at ' + ports.httpPort + ' port');
     });
 
     done();
@@ -256,25 +183,6 @@ export function sass(){
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(paths.css.dst))
         .pipe(stream());
-};
-
-// Task: copy bootstrap js to dist
-export function bootstrap_js(){
-    return gulp.src(config.componentDir + '/bootstrap/dist/js/bootstrap.min.js')
-        .pipe(gulp.dest(config.outputDir + '/js'));
-};
-
-// Task: copy jquery to dist
-export function jquery(){
-    return gulp.src(config.componentDir + '/jquery-1.11.3/dist/jquery.min.*')
-        .pipe(gulp.dest(config.outputDir + '/js'));
-};
-
-// Task: copy fontawesome fonts to dist
-export function fontawesome_fonts(){
-    return gulp.src([
-        config.componentDir + '/font-awesome/fonts/*'])
-        .pipe(gulp.dest(paths.fonts.dst));
 };
 
 // Task: copy src: html/assets to dist
@@ -359,13 +267,7 @@ export function watch(){
 };
 
 // Gulp: bring them all together
-let build;
-if(options.vendors){
-    build = gulp.parallel(sass, html, minifyImg, js_min, js_bundle, bootstrap_js, fontawesome_fonts);
-} else {
-    build = gulp.parallel(sass, minifyImg, minifyImg_assets, js_min, js_bundle);
-}
-
+let build = gulp.parallel(sass, html, minifyImg, minifyImg_assets, js_min, js_bundle);
 const dev = gulp.series(clean, svg, html_assets, build, gulp.parallel(liveReload, watch));
 
 export default dev;
