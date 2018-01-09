@@ -13,7 +13,7 @@
         "babel-register": "^6.26.0",
         "gulp": "^4.0.0",
         "gulp-babel": "^7.0.0",
-        "gulp-cli": "^1.4.0"
+        "gulp-cli": "^2.0.0"
     },
     "devDependencies": {
         "browser-sync": "^2.23.3",
