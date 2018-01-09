@@ -28,9 +28,7 @@
       "http-proxy-damon":    "^1.15.2",
       "del":                 "^3.0.0",
       "minimist":            "^1.2.0",
-      "font-awesome":        "^4.7.0",
-      "bootstrap":           "^4.0.0-beta",
-      "browser-sync":        "^2.18.11",
+      "browser-sync":        "^2.23.3",
       "megatype":            "^1.1.2"
   }
 }
