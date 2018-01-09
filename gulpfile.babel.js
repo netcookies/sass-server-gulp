@@ -6,7 +6,7 @@ import babel from 'gulp-babel';
 // Include plugins
 import sassCompiler from 'gulp-sass';
 import minifyCss    from 'gulp-clean-css';
-import minifyJs     from 'gulp-uglify';
+import uglifyJs     from 'gulp-uglify';
 import rename       from 'gulp-rename';
 import browserSync  from 'browser-sync';
 import imagemin     from 'gulp-imagemin';
@@ -26,15 +26,23 @@ import httpProxy    from 'http-proxy';
 // console arguments
 
 const knownOptions = {
-    boolean: ['nolocal']
+    boolean: ['nolocal', 'static']
 };
 
 const options = minimist(process.argv.slice(2), knownOptions);
 
 // configs
 
-import {ports, config} from 'conf/conf';
-import paths from 'conf/paths';
+import {ports, config} from './conf/conf';
+import {paths}         from './conf/paths';
+
+if(!options.static) {
+    const liPath    = config.outputDir + 'html/assets';
+    paths.img.dst   = liPath;
+    paths.js.dst    = liPath;
+    paths.fonts.dst = liPath;
+    paths.html.dst  = config.outputDir + 'html';
+}
 
 // sass options
 
@@ -79,7 +87,7 @@ const sslCerts = {
 // Task: clean assets before run
 export const clean = () => del([
     paths.css.dst,
-    paths.image.dst,
+    paths.img.dst,
     paths.js.dst + '/**',
     '!' + paths.js.dst,
     '!' + paths.js.dst + '/vendor/**'
@@ -185,34 +193,20 @@ export function sass(){
         .pipe(stream());
 };
 
-// Task: copy src: html/assets to dist
-export function html_assets(){
-    return gulp.src(paths.assets.src)
-        .pipe(gulp.dest(paths.assets.dst));
-};
-
-// Task: compress images in html/assets
-export function minifyImg_assets() {
-    return gulp.src(paths.assets.imgSrc, {since: gulp.lastRun(minifyImg_assets)})
-        .pipe(imagemin())
-        .pipe(gulp.dest(paths.assets.dst))
-        .pipe(stream());
-}
-
 // Task: compress images in /img
 export function minifyImg(){
-    return gulp.src(paths.image.src, {since: gulp.lastRun(minifyImg)})
+    return gulp.src(paths.img.src, {since: gulp.lastRun(minifyImg)})
         .pipe(imagemin())
-        .pipe(gulp.dest(paths.image.dst))
+        .pipe(gulp.dest(paths.img.dst))
         .pipe(stream());
 };
 
 // Task: minify Js put them into dist
-export function js_min(){
+export function minifyJs(){
     return gulp.src(paths.js.src)
         .pipe(babel())
         .pipe(sourcemaps.init())
-        .pipe(minifyJs().on('error', function(e) {
+        .pipe(uglifyJs().on('error', function(e) {
             console.error(e.message);
             this.emit('end');
         }))
@@ -224,11 +218,11 @@ export function js_min(){
 };
 
 // Task: concat JS libs files into one file then put them into dist
-export function js_bundle(){
+export function jsCombiner(){
     return gulp.src(paths.js.libs)
         .pipe(concat('bundle.js'))
         .pipe(sourcemaps.init())
-        .pipe(minifyJs().on('error', function(e) {
+        .pipe(uglifyJs().on('error', function(e) {
             console.error(e.message);
             this.emit('end');
         }))
@@ -254,20 +248,26 @@ export function html(){
         .pipe(gulp.dest(paths.html.dst));
 };
 
+// Task: copy fonts files in /fonts to dist
+export function fonts(){
+    return gulp.src(paths.fonts.src)
+        .pipe(gulp.dest(paths.fonts.dst));
+};
+
 // Task: Watch files change and fire event
 export function watch(){
-    gulp.watch(paths.html.src, html);
-    gulp.watch(paths.html.watch, reload);
-    gulp.watch(paths.js.src, js_min);
-    gulp.watch(paths.js.libs, js_bundle);
-    gulp.watch(paths.css.src, sass);
-    gulp.watch(paths.image.src, minifyImg);
-    gulp.watch(paths.assets.imgSrc, minifyImg_assets);
-    gulp.watch(paths.svg.src, svg);
+           gulp.watch(paths.html.src,        html);
+           gulp.watch(paths.fonts.src,       fonts);
+           gulp.watch(paths.html.watch,      reload);
+           gulp.watch(paths.js.src,          minifyJs);
+           gulp.watch(paths.js.libs,         jsCombiner);
+           gulp.watch(paths.img.src,         minifyImg);
+           gulp.watch(paths.css.src,         sass);
+           gulp.watch(paths.svg.src,         svg);
 };
 
 // Gulp: bring them all together
-let build = gulp.parallel(sass, html, minifyImg, minifyImg_assets, js_min, js_bundle);
-const dev = gulp.series(clean, svg, html_assets, build, gulp.parallel(liveReload, watch));
+let build = gulp.parallel(sass, html, fonts, minifyImg, minifyJs, jsCombiner);
+const dev = gulp.series(clean, svg, build, gulp.parallel(liveReload, watch));
 
 export default dev;
