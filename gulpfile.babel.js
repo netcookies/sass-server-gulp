@@ -269,7 +269,6 @@ export function watch(){
 // Gulp: bring them all together
 let build = gulp.parallel(sass, html, fonts, minifyImg, minifyJs, jsCombiner);
 const dev = gulp.series(clean, svg, build, gulp.parallel(liveReload, watch));
-const dist = gulp.series(clean, svg, build);
 
-export dist;
+export const dist = gulp.series(clean, svg, build);
 export default dev;
