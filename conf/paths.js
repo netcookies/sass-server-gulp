@@ -19,6 +19,10 @@ export let paths = {
         src: config.inputDir + '/fonts/**/*.{eot,svg,ttf,woff}',
         dst: config.outputDir + 'fonts'
     },
+    icons: {
+        src: config.inputDir + '/icons/**/*',
+        dst: config.outputDir
+    },
     css: {
         src: [config.inputDir + '/scss/*.scss', config.inputDir + '/scss/**/_*.scss'],
         dst: config.outputDir + 'css'
