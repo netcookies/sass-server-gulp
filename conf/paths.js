@@ -16,7 +16,7 @@ export let paths = {
         watch: config.outputDir + '**/*.html'
     },
     fonts: {
-        src: config.inputDir + '/fonts/**/*.{eot,svg,ttf,woff}',
+        src: config.inputDir + '/fonts/**/*.{eot,svg,ttf,woff,woff2}',
         dst: config.outputDir + 'fonts'
     },
     icons: {
