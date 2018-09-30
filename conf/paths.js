@@ -30,5 +30,9 @@ export let paths = {
     svg: {
         src: config.inputDir + '/svg/**/*.svg',
         dst: config.inputDir + '/scss'
+    },
+    others: {
+        src: config.inputDir + '/others/**/*',
+        dst: config.outputDir
     }
 };

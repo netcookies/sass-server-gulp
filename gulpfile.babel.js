@@ -260,10 +260,17 @@ export function icons(){
         .pipe(gulp.dest(paths.icons.dst));
 };
 
+// Task: copy fav icons files in to dist
+export function others(){
+    return gulp.src(paths.others.src)
+        .pipe(gulp.dest(paths.others.dst));
+};
+
 // Task: Watch files change and fire event
 export function watch(){
            gulp.watch(paths.html.src,        html);
            gulp.watch(paths.icons.src,       icons);
+           gulp.watch(paths.others.src,      others);
            gulp.watch(paths.fonts.src,       fonts);
            gulp.watch(paths.html.watch,      reload);
            gulp.watch(paths.js.src,          minifyJs);
@@ -274,7 +281,7 @@ export function watch(){
 };
 
 // Gulp: bring them all together
-let build = gulp.parallel(sass, html, fonts, icons, minifyImg, minifyJs, jsCombiner);
+let build = gulp.parallel(sass, html, fonts, icons, others, minifyImg, minifyJs, jsCombiner);
 const dev = gulp.series(clean, svg, build, gulp.parallel(liveReload, watch));
 
 export const dist = gulp.series(clean, svg, build);
