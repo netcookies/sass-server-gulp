@@ -58,7 +58,11 @@ let sassOptions = {
 let browserSyncOptions = {
     server: {
         baseDir: [config.outputDir],
-        directory: true
+        directory: true,
+        middleware: function (req, res, next) {
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            next();
+        }
     },
     open: false,
     port: ports.browserSyncPort
